@@ -1,0 +1,7 @@
+{
+  "name": "gers-garage-cct",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
