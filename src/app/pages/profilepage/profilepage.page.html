@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>profilepage</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="authService.userData$ | async as profile;">
+    <ion-card-header>
+      <h1>Hello: <strong>{{ profile.fName }}</strong></h1>
+      <p>Number: <strong>{{ profile.mobile }}</strong></p>
+      <p>Surname: {{ profile.lName }}</p>
+    </ion-card-header>
+    <ion-card-content>
+      Last Name:
+    </ion-card-content>
+  </ion-card>
+</ion-content>

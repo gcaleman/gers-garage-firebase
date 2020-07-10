@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Log In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form>
+    <ion-item lines="full">
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="text" #userName required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" #userPassword required></ion-input>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <ion-button
+          type="submit"
+          color="danger"
+          expand="block"
+          (click)="authService.SignIn(userName.value, userPassword.value)"
+          >Sign In</ion-button
+        >
+        <ion-button
+          type="submit"
+          color="danger"
+          expand="block"
+          (click)="authService.GoogleAuth()"
+          >Sign In with Google</ion-button
+        >
+        <a [routerLink]="['/forgot-password']" class="small-text"
+          >Forgot Password?</a
+        >
+      </ion-col>
+    </ion-row>
+  <ion-row>
+    <ion-col>
+      <a [routerLink]="['/sign-up']" class="small-text"
+        >Do not have an account?</a
+      >
+    </ion-col>
+  </ion-row>
+
+  </form>
+</ion-content>

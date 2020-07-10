@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>home</ion-title>
+  </ion-toolbar>
+  <ion-button
+    type="submit"
+    color="danger"
+    expand="block"
+    (click)="authService.SignOut()"
+    >Sign out</ion-button
+  >
+</ion-header>
+<ion-tabs>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="profile">
+      <ion-icon name="triangle"></ion-icon>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="register-car">
+      <ion-icon name="ellipse"></ion-icon>
+      <ion-label>Register car</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="booking">
+      <ion-icon name="square"></ion-icon>
+      <ion-label>Booking</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+</ion-tabs>

@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="authService.addProfileForm" (submit)="authService.addProfile()">
+    <ion-item>
+      <ion-label stacked>First Name</ion-label>
+      <ion-input
+        formControlName="fName"
+        type="text"
+        required
+        placeholder="Type in your first name."
+      >
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Last Name</ion-label>
+      <ion-input
+        formControlName="lName"
+        type="text"
+        required
+        placeholder="Type in your last name."
+      >
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label stacked>Mobile number</ion-label>
+      <ion-input
+        formControlName="userMobile"
+        type="text"
+        required
+        placeholder="Type in your mobile number."
+      >
+      </ion-input>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="!authService.addProfileForm.valid">
+      Add Profile
+    </ion-button>
+  </form>
+</ion-content>
