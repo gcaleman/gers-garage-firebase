@@ -1,7 +1,8 @@
 export class Client {
-    uid: String;
+    date: Date;
     carModel: String;
     carColor: String;
-    carPlateNumb: number;
+    carPlateNumb: String;
     service: String;
+    comments: String;
 }

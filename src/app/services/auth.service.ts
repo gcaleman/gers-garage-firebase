@@ -5,8 +5,7 @@ import { auth } from "firebase/app";
 import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
-  AngularFirestoreDocument,
-  AngularFirestoreCollection} from "@angular/fire/firestore";
+  AngularFirestoreDocument} from "@angular/fire/firestore";
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Profile } from "./profile";
@@ -47,10 +46,12 @@ export class AuthService implements OnInit {
 
     // Form group for service registration
     this.addServiceForm = formBuilder.group({
+      date: ["", Validators.required],
       carModel: ["", Validators.required],
       carColor: ["", Validators.required],
       carPlateNumb: ["", Validators.required],
       service: ["", Validators.required],
+      comments: [""],
     });
 
     this.userProfile = this.firestoreAuth.authState.pipe(
@@ -111,15 +112,37 @@ export class AuthService implements OnInit {
 
   }
 
-  getClientService(): AngularFireList<Client>{
-    if (!this.userUid) return;
-    this.userServices = this.db.list(`services/`);
-    return this.userServices;
-  }
+  async createClientService() {
+    var currentUser = await this.firestoreAuth.currentUser;
 
-  createClientService(client: Client){
-    client.uid = this.userUid;
-    this.userServices.push(client);
+    const date: Date = this.addServiceForm.value.date;
+    const carModel: String = this.addServiceForm.value.carModel;
+    const carColor: String = this.addServiceForm.value.carColor;
+    const carPlateNumb: String = this.addServiceForm.value.carPlateNumb;
+    const service: String = this.addServiceForm.value.service;
+    const comments: String = this.addServiceForm.value.comments;
+
+    const userRef: AngularFirestoreDocument<Client> = this.firestore.collection('services').doc(currentUser.uid).collection('userService').doc(this.addServiceForm.value.date)
+    ;
+    const data = {
+      date: date,
+      carModel: carModel,
+      carColor: carColor,
+      carPlateNumb: carPlateNumb,
+      service: service,
+      comments: comments,
+    };
+    return userRef.set(data, {
+      merge: true,
+    }).then(() => {
+        window.alert("Successfully added service.");
+        this.router.navigate(["home"]);
+      })
+      .catch((error) => {
+        window.alert(error.message);
+        this.router.navigate(["sign-in"]);
+      });
+
   }
 
 

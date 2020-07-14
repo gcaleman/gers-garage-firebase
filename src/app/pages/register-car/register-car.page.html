@@ -5,15 +5,79 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="authService.addServiceForm" (submit)="">
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" #userEmail required></ion-input>
+  <form
+    [formGroup]="authService.addServiceForm"
+    (submit)="authService.createClientService()"
+  >
+    <ion-item>
+      <ion-label stacked>Car Model</ion-label>
+      <ion-input
+        formControlName="carModel"
+        type="text"
+        required
+        placeholder="Type in your car model (e.g. 'Honda Civic')."
+      >
+      </ion-input>
     </ion-item>
-    
+    <ion-item>
+      <ion-label stacked>Car Color</ion-label>
+      <ion-input
+        formControlName="carColor"
+        type="text"
+        required
+        placeholder="Type in your car color (e.g. 'Black')."
+      >
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Plate Number</ion-label>
+      <ion-input
+        formControlName="carPlateNumb"
+        type="text"
+        required
+        placeholder="Type in your car plate number."
+      >
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Select a Service</ion-label>
+      <ion-select placeholder="Select One" formControlName="service" required>
+        <ion-select-option value="Annual Service"
+          >Annual Service</ion-select-option
+        >
+        <ion-select-option value="Major Service"
+          >Major Service</ion-select-option
+        >
+        <ion-select-option value="Repair">Repair</ion-select-option>
+        <ion-select-option value="Major Repair">Major Repair</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Comments</ion-label>
+      <ion-input
+        formControlName="comments"
+        type="text"
+        placeholder="Type in your car problem. (e.g. 'Flat tire')"
+      >
+      </ion-input>
+    </ion-item>
+    <ion-button color="primary" expand="block" (click)="showCalendar()"
+      >Select date</ion-button
+    >
+    <div id="myCalendar">
+      <ion-item>
+        
+      </ion-item>
+    </div>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" color="danger" expand="block">Sign Up</ion-button>
+        <ion-button
+          type="submit"
+          color="danger"
+          expand="block"
+          [disabled]="!authService.addServiceForm.valid"
+          >Continue</ion-button
+        >
       </ion-col>
     </ion-row>
   </form>

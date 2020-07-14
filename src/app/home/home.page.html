@@ -1,15 +1,15 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>home</ion-title>
-  </ion-toolbar>
-  <ion-button
+    <ion-button
     type="submit"
     color="danger"
-    expand="block"
     (click)="authService.SignOut()"
     >Sign out</ion-button
   >
+  </ion-toolbar>  
 </ion-header>
+<ion-content>
 <ion-tabs>
 
   <ion-tab-bar slot="bottom">
@@ -30,3 +30,4 @@
   </ion-tab-bar>
 
 </ion-tabs>
+</ion-content>

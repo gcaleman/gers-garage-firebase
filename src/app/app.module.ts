@@ -18,6 +18,8 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { environment } from "../environments/environment";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
+import { DatePickerModule } from 'ionic4-date-picker';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -31,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     AngularFireStorageModule,
     FormsModule,
     ReactiveFormsModule,
+    DatePickerModule
   ],
   providers: [
     AuthService,

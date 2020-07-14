@@ -11,8 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ["./profile.page.scss"],
 })
 export class ProfilePage implements OnInit {
-  /* public addProfileForm: FormGroup; */
-
+  
   constructor(
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
@@ -22,35 +21,10 @@ export class ProfilePage implements OnInit {
     public router: Router,
     public actRoute: ActivatedRoute
   ) {
-    /* this.addProfileForm = formBuilder.group({
-      fName: ["", Validators.required],
-      lName: ["", Validators.required],
-      userMobile: ["", Validators.required],
-    }); */
+   
   }
 
   ngOnInit() {}
 
-  /* async addProfile() {
-    const loading = await this.loadingCtrl.create();
-
-    const fName = this.addProfileForm.value.fName;
-    const lName = this.addProfileForm.value.lName;
-    const mobile = this.addProfileForm.value.userMobile;
-
-    this.firestoreService
-    .createProfile(lName, fName, mobile)
-    .then(
-      () => {
-        loading.dismiss().then(() => {
-          this.router.navigate(["profilepage"]);
-        });
-      },
-      error => {
-        console.error(error);
-      }
-    );
-
-    return await loading.present();
-  } */
+  
 }
