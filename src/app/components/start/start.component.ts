@@ -11,7 +11,8 @@ export class StartComponent implements OnInit {
 
   ngOnInit() {}
 
-  navigateSingIn() {
-    this.router.navigate(["sing-in"]);
-  }
+  navigateToLogin() {
+    this.router.navigate(['sign-in']);
+    }
+
 }

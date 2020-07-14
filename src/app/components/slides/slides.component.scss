@@ -1,9 +1,11 @@
-ion-slide{
-    padding: 80px 15px;
-    overflow-y: auto;
-    display: block;
-    h2{
-        font-size: 30px;
-        font-weight: bold;
-    }
+ion-slide {
+  padding: 160px 20px 160px 20px;
+  display: block;
+  img {
+    width: 100px;
   }
+  h2 {
+    font-size: 30px;
+    font-weight: bold;
+  }
+}

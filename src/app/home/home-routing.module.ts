@@ -5,39 +5,39 @@ import { HomePage } from "./home.page";
 
 const routes: Routes = [
   {
-    path: "home",
+    path: 'home',
     component: HomePage,
     children: [
       {
-        path: "profilepage",
+        path: 'profilepage',
         loadChildren: () =>
           import("../pages/profilepage/profilepage.module").then(
             (m) => m.ProfilepagePageModule
           ),
       },
       {
-        path: "profile",
+        path: 'profile',
         loadChildren: () =>
           import("../pages/profile/profile.module").then(
             (m) => m.ProfilePageModule
           ),
       },
       {
-        path: "register-car",
+        path: 'register-car',
         loadChildren: () =>
           import("../pages/register-car/register-car.module").then(
             (m) => m.RegisterCarPageModule
           ),
       },
       {
-        path: "booking",
+        path: 'booking',
         loadChildren: () =>
           import("../pages/booking/booking.module").then(
             (m) => m.BookingPageModule
           ),
       },
     ],
-  },
+  }
 ];
 
 @NgModule({

@@ -8,7 +8,6 @@ import { IonicModule } from '@ionic/angular';
 
 
 
-
 @NgModule({
   declarations: [SlidesComponent, StartComponent, LogoComponent],
   exports:[SlidesComponent, StartComponent, LogoComponent],

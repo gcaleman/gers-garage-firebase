@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="authService.userData$ | async as profile;">
+  <ion-card *ngIf="authService.userProfile | async as profile;">
     <ion-card-header>
       <h1>Hello: <strong>{{ profile.fName }}</strong></h1>
       <p>Number: <strong>{{ profile.mobile }}</strong></p>

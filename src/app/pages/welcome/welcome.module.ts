@@ -10,7 +10,6 @@ import { WelcomePage } from './welcome.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 
 
-
 @NgModule({
   imports: [
     CommonModule,

@@ -4,12 +4,12 @@ import { AuthGuard } from "../app/guards/auth.guard";
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     loadChildren: () =>
       import("./index/index.module").then((m) => m.IndexPageModule),
   },
   {
-    path: "",
+    path: '',
     loadChildren: () =>
       import("./home/home.module").then((m) => m.HomePageModule),
   },

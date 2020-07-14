@@ -1,18 +1,18 @@
 import { Injectable, NgZone, OnInit } from "@angular/core";
 import { User } from "./user";
+import { Client } from "./client";
 import { auth } from "firebase/app";
 import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
   AngularFirestoreDocument,
-  AngularFirestoreCollection,
-} from "@angular/fire/firestore";
+  AngularFirestoreCollection} from "@angular/fire/firestore";
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Profile } from "./profile";
 
 import { LoadingController, AlertController } from "@ionic/angular";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { identifierModuleUrl } from "@angular/compiler";
 import { Observable, of } from 'rxjs';
 import { switchMap } from "rxjs/operators";
 
@@ -22,10 +22,13 @@ import { switchMap } from "rxjs/operators";
 })
 export class AuthService implements OnInit {
   userProfile: Observable<Profile>;
+  userServices: AngularFireList<Client>;
   userData;
   userUid;
   public addProfileForm: FormGroup;
+  public addServiceForm: FormGroup;
   constructor(
+    public db: AngularFireDatabase, // Inject Firestore real time database service
     public firestore: AngularFirestore, // Inject Firestore service
     public firestoreAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
@@ -35,10 +38,19 @@ export class AuthService implements OnInit {
     public alertCtrl: AlertController,
     public formBuilder: FormBuilder
   ) {
+    // Form group for user profile registration
     this.addProfileForm = formBuilder.group({
       fName: ["", Validators.required],
       lName: ["", Validators.required],
       userMobile: ["", Validators.required],
+    });
+
+    // Form group for service registration
+    this.addServiceForm = formBuilder.group({
+      carModel: ["", Validators.required],
+      carColor: ["", Validators.required],
+      carPlateNumb: ["", Validators.required],
+      service: ["", Validators.required],
     });
 
     this.userProfile = this.firestoreAuth.authState.pipe(
@@ -99,6 +111,18 @@ export class AuthService implements OnInit {
 
   }
 
+  getClientService(): AngularFireList<Client>{
+    if (!this.userUid) return;
+    this.userServices = this.db.list(`services/`);
+    return this.userServices;
+  }
+
+  createClientService(client: Client){
+    client.uid = this.userUid;
+    this.userServices.push(client);
+  }
+
+
   // Sign in with email/password
   SignIn(email, password) {
     return this.firestoreAuth
@@ -107,7 +131,7 @@ export class AuthService implements OnInit {
         this.ngZone.run(() => {
           this.router.navigate(["home"]);
         });
-        this.SetUserData(result.user);
+        this.updateUserData(result.user);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -120,7 +144,7 @@ export class AuthService implements OnInit {
       .createUserWithEmailAndPassword(email, password)
       .then(async (result) => {
         this.SendVerificationMail();
-        this.SetUserData(result.user);
+        this.updateUserData(result.user);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -167,7 +191,7 @@ export class AuthService implements OnInit {
         this.ngZone.run(() => {
           this.router.navigate(["home"]);
         });
-        this.SetUserData(result.user);
+        this.updateUserData(result.user);
       })
       .catch((error) => {
         window.alert(error);
@@ -177,7 +201,7 @@ export class AuthService implements OnInit {
   /* Setting up user data when sign in with username/password,
   sign up with username/password and sign in with social auth
   provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  async SetUserData(user) {
+  async updateUserData(user) {
     const userRef: AngularFirestoreDocument<any> = this.firestore.doc(
       `users/${user.uid}`
     );
