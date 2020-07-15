@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ (services | async)?.date }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <h3>Car Info</h3>
+  <p>
+    Car model: {{ (services | async)?.carModel }}
+  </p>
+
+  <h3>Service</h3>
+  <p>
+    Service type: {{ (services | async)?.service }}
+  </p>
+
+  <h3>Status</h3>
+  <p>
+    {{ (services | async)?.status }}
+  </p>
+</ion-content>

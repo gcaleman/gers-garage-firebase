@@ -5,5 +5,12 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-card *ngFor="let services of authService.userServices | async">
+    <ion-card-header>
+      {{ services.carModel }}
+    </ion-card-header>
+    <ion-card-content>
+      {{ services.carPlateNumb }}
+    </ion-card-content>
+  </ion-card>
 </ion-content>

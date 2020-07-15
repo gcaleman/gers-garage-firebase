@@ -5,4 +5,5 @@ export class Client {
     carPlateNumb: String;
     service: String;
     comments: String;
+    status: String;
 }

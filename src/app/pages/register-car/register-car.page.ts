@@ -13,6 +13,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class RegisterCarPage implements OnInit {
 
+
+  myDate = new Date().toISOString();
+
   constructor(
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
@@ -21,15 +24,24 @@ export class RegisterCarPage implements OnInit {
     public formBuilder: FormBuilder,
     public router: Router,
     public actRoute: ActivatedRoute
-  ) {}
-
-
+  ) {
+    if (this.myDate.includes("Sunday")) {
+      
+    }
+  }
   
   ngOnInit(): void {
     
   }
 
-  
+  dateChanged(date){
+    console.log(date.detail.value);
+    console.log(this.myDate);
+  }
+
+  getDate(){
+    
+  }
 
   showCalendar() {
     var calendar = document.getElementById("myCalendar");

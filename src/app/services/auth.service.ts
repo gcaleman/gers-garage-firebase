@@ -5,23 +5,25 @@ import { auth } from "firebase/app";
 import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
-  AngularFirestoreDocument} from "@angular/fire/firestore";
+  AngularFirestoreDocument,
+  AngularFirestoreCollection} from "@angular/fire/firestore";
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Profile } from "./profile";
 
 import { LoadingController, AlertController } from "@ionic/angular";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators, FormControl } from "@angular/forms";
 import { Observable, of } from 'rxjs';
 import { switchMap } from "rxjs/operators";
 
+import { Validator } from "./validator";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService implements OnInit {
   userProfile: Observable<Profile>;
-  userServices: AngularFireList<Client>;
+  userServices: Observable<Client>;
   userData;
   userUid;
   public addProfileForm: FormGroup;
@@ -46,7 +48,7 @@ export class AuthService implements OnInit {
 
     // Form group for service registration
     this.addServiceForm = formBuilder.group({
-      date: ["", Validators.required],
+      date: new FormControl ("", Validators.compose([Validators.required])),
       carModel: ["", Validators.required],
       carColor: ["", Validators.required],
       carPlateNumb: ["", Validators.required],
@@ -58,6 +60,17 @@ export class AuthService implements OnInit {
       switchMap(user => {
         if (user) {
           return this.firestore.doc<Profile>(`profileData/${user.uid}`).valueChanges()
+        } else {
+          window.Error("Please Log in!");
+          return of(null);
+        }
+      })
+    );
+
+    this.userServices = this.firestoreAuth.authState.pipe(
+      switchMap(user => {
+        if (user) {
+          return this.getServices().valueChanges()
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -122,7 +135,7 @@ export class AuthService implements OnInit {
     const service: String = this.addServiceForm.value.service;
     const comments: String = this.addServiceForm.value.comments;
 
-    const userRef: AngularFirestoreDocument<Client> = this.firestore.collection('services').doc(currentUser.uid).collection('userService').doc(this.addServiceForm.value.date)
+    const userRef: AngularFirestoreDocument<Client> = this.firestore.collection('services').doc(currentUser.uid).collection('userCar').doc(this.addServiceForm.value.carModel)
     ;
     const data = {
       date: date,
@@ -131,6 +144,7 @@ export class AuthService implements OnInit {
       carPlateNumb: carPlateNumb,
       service: service,
       comments: comments,
+      status: "waiting"
     };
     return userRef.set(data, {
       merge: true,
@@ -145,6 +159,13 @@ export class AuthService implements OnInit {
 
   }
 
+  getServices(): AngularFirestoreCollection<Client>{
+    return this.firestore.collection('services').doc(this.userUid).collection('userService');
+  }
+
+  getServicesDetail(date): AngularFirestoreDocument<Client>{
+    return this.firestore.collection('services').doc(this.userUid).collection('userService').doc(date);
+  }
 
   // Sign in with email/password
   SignIn(email, password) {

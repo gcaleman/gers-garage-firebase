@@ -13,6 +13,11 @@ const routes: Routes = [
     loadChildren: () =>
       import("./home/home.module").then((m) => m.HomePageModule),
   },
+  {
+    path: 'detail/:date',
+    loadChildren: () => import('./pages/detail/detail.module').then( m => m.DetailPageModule)
+  },
+
 ];
 @NgModule({
   imports: [

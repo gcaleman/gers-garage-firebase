@@ -61,14 +61,10 @@
       >
       </ion-input>
     </ion-item>
-    <ion-button color="primary" expand="block" (click)="showCalendar()"
-      >Select date</ion-button
-    >
-    <div id="myCalendar">
-      <ion-item>
-        
-      </ion-item>
-    </div>
+    <ion-item>
+      <ion-label>Select a date</ion-label>
+      <ion-datetime displayFormat="DDDD, DD MM YYYY" placeholder="Select date" [ngModel]="myDate" (ionChange)="dateChanged($event)" formControlName="date"></ion-datetime>
+    </ion-item>
     <ion-row>
       <ion-col>
         <ion-button
