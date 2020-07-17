@@ -63,7 +63,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Select a date</ion-label>
-      <ion-datetime displayFormat="DDDD, DD MM YYYY" placeholder="Select date" [ngModel]="myDate" (ionChange)="dateChanged($event)" formControlName="date"></ion-datetime>
+      <ion-datetime displayFormat="DDDD, DD MM YYYY" [min]="myDate" placeholder="Select date" [ngModel]="myDate" (ionChange)="dateChanged($event)" formControlName="date"></ion-datetime>
     </ion-item>
     <ion-row>
       <ion-col>

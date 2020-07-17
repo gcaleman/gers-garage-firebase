@@ -17,6 +17,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from "rxjs/operators";
 
 import { Validator } from "./validator";
+import { RegisterCarPage } from "../pages/register-car/register-car.page";
 
 @Injectable({
   providedIn: "root",
@@ -49,7 +50,7 @@ export class AuthService implements OnInit {
 
     // Form group for service registration
     this.addServiceForm = formBuilder.group({
-      date: new FormControl ("", Validators.compose([Validators.required])),
+      date: new FormControl ("", Validators.compose([Validator.validDate, Validators.required])),
       carModel: ["", Validators.required],
       carColor: ["", Validators.required],
       carPlateNumb: ["", Validators.required],
