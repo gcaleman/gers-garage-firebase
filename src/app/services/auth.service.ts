@@ -6,18 +6,24 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import {
   AngularFirestore,
   AngularFirestoreDocument,
-  AngularFirestoreCollection} from "@angular/fire/firestore";
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+  AngularFirestoreCollection,
+} from "@angular/fire/firestore";
+import { AngularFireDatabase } from "@angular/fire/database";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Profile } from "./profile";
 
 import { LoadingController, AlertController } from "@ionic/angular";
-import { FormGroup, FormBuilder, Validators, FormControl } from "@angular/forms";
-import { Observable, of } from 'rxjs';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormControl,
+} from "@angular/forms";
+import { Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
 
 import { Validator } from "./validator";
-import { RegisterCarPage } from "../pages/register-car/register-car.page";
+import { Bookings } from "./bookings";
 
 @Injectable({
   providedIn: "root",
@@ -25,7 +31,9 @@ import { RegisterCarPage } from "../pages/register-car/register-car.page";
 export class AuthService implements OnInit {
   userProfile: Observable<Profile>;
   userServices: Observable<Client>;
+  bookings: Observable<Bookings>;
   userCars: Observable<Client>;
+  user$: Observable<User>;
   userData;
   userUid;
   public addProfileForm: FormGroup;
@@ -50,7 +58,10 @@ export class AuthService implements OnInit {
 
     // Form group for service registration
     this.addServiceForm = formBuilder.group({
-      date: new FormControl ("", Validators.compose([Validator.validDate, Validators.required])),
+      date: new FormControl(
+        "",
+        Validators.compose([Validator.validDate, Validators.required])
+      ),
       carModel: ["", Validators.required],
       carColor: ["", Validators.required],
       carPlateNumb: ["", Validators.required],
@@ -58,10 +69,22 @@ export class AuthService implements OnInit {
       comments: [""],
     });
 
-    this.userProfile = this.firestoreAuth.authState.pipe(
-      switchMap(user => {
+    this.user$ = this.firestoreAuth.authState.pipe(
+      switchMap((user) => {
         if (user) {
-          return this.firestore.doc<Profile>(`profileData/${user.uid}`).valueChanges()
+          return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
+        } else {
+          return of(null);
+        }
+      })
+    );
+
+    this.userProfile = this.firestoreAuth.authState.pipe(
+      switchMap((user) => {
+        if (user) {
+          return this.firestore
+            .doc<Profile>(`profileData/${user.uid}`)
+            .valueChanges();
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -70,9 +93,9 @@ export class AuthService implements OnInit {
     );
 
     this.userServices = this.firestoreAuth.authState.pipe(
-      switchMap(user => {
+      switchMap((user) => {
         if (user) {
-          return this.getServices().valueChanges()
+          return this.getServices().valueChanges();
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -81,9 +104,9 @@ export class AuthService implements OnInit {
     );
 
     this.userCars = this.firestoreAuth.authState.pipe(
-      switchMap(user => {
+      switchMap((user) => {
         if (user) {
-          return this.getCars().valueChanges()
+          return this.getCars().valueChanges();
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -93,22 +116,21 @@ export class AuthService implements OnInit {
 
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
-    
-     this.firestoreAuth.authState.subscribe(user => {
+
+    this.firestoreAuth.authState.subscribe((user) => {
       if (user) {
         this.userData = user;
         this.userUid = user.uid;
-        localStorage.setItem('user', JSON.stringify(this.userData));
-        JSON.parse(localStorage.getItem('user'));
-      } else { 
-       localStorage.setItem('user', null);
-        JSON.parse(localStorage.getItem('user')); 
-       }
+        localStorage.setItem("user", JSON.stringify(this.userData));
+        JSON.parse(localStorage.getItem("user"));
+      } else {
+        localStorage.setItem("user", null);
+        JSON.parse(localStorage.getItem("user"));
+      }
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   async addProfile() {
     var currentUser = await this.firestoreAuth.currentUser;
@@ -125,31 +147,54 @@ export class AuthService implements OnInit {
       lName: lName,
       mobile: mobile,
     };
-    return userRef.set(data, {
-      merge: true,
-    }).then(() => {
+    return userRef
+      .set(data, {
+        merge: true,
+      })
+      .then(() => {
         window.alert("Successfully added to profile.");
-        this.router.navigate(["profilepage"]);
+        this.router.navigate(["home/profilepage"]);
       })
       .catch((error) => {
         window.alert(error.message);
         this.router.navigate(["sign-in"]);
       });
-
   }
 
   async createClientService() {
     var currentUser = await this.firestoreAuth.currentUser;
-
-    const date: Date = this.addServiceForm.value.date;
+    var d = this.addServiceForm.value.date.split("T");
+    const uid: String = currentUser.uid;
+    const date: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
+    console.log(date);
+    var count = this.getDateCount(date); // get the date count from the database;
     const carModel: String = this.addServiceForm.value.carModel;
     const carColor: String = this.addServiceForm.value.carColor;
     const carPlateNumb: String = this.addServiceForm.value.carPlateNumb;
     const service: String = this.addServiceForm.value.service;
     const comments: String = this.addServiceForm.value.comments;
+    var cost: String;
+    if (service.includes("Repair")) {
+      cost = "$50";
+    } else if (service.includes("Major Repair")) {
+      cost = "$100";
+    } else if (service.includes("Annual Service")) {
+      cost = "$200";
+    } else if (service.includes("Major Service")) {
+      cost = "$250";
+    } else {
+      cost = "Waiting avaliation";
+    }
 
-    const userRef: AngularFirestoreDocument<Client> = this.firestore.collection('services').doc(currentUser.uid).collection('userCar').doc(this.addServiceForm.value.carModel)
-    ;
+    const userRef: AngularFirestoreDocument<Client> = this.firestore
+      .collection("services")
+      .doc(currentUser.uid)
+      .collection("booking")
+      .doc(this.addServiceForm.value.carModel);
+    const userBook: AngularFirestoreCollection<Bookings> = this.firestore
+      .collection("services")
+      .doc("dates")
+      .collection(date.toString());
     const data = {
       date: date,
       carModel: carModel,
@@ -157,31 +202,71 @@ export class AuthService implements OnInit {
       carPlateNumb: carPlateNumb,
       service: service,
       comments: comments,
-      status: "waiting"
+      status: "waiting",
+      cost: cost,
     };
-    return userRef.set(data, {
-      merge: true,
-    }).then(() => {
-        window.alert("Successfully added service.");
-        this.router.navigate(["home"]);
-      })
-      .catch((error) => {
-        window.alert(error.message);
-        this.router.navigate(["sign-in"]);
+    const bookings = {
+      uid: uid,
+      date: date,
+      service: service,
+      status: "waiting",
+    };
+    console.log("count: " + (await count));
+    if ((await count) > 2) {
+      window.alert("Date is fully booked. Please choose another one");
+      this.router.navigate(["home"]);
+    } else {
+      userBook.add(bookings);
+      return userRef
+        .set(data, {
+          merge: true,
+        })
+        .then(() => {
+          window.alert("Successfully added service.");
+          this.router.navigate(["home/profilepage"]);
+        })
+        .catch((error) => {
+          window.alert(error.message);
+          this.router.navigate(["sign-in"]);
+        });
+    }
+  }
+
+  async getDateCount(date) {
+    var size;
+    await this.firestore
+      .collection("services")
+      .doc("dates")
+      .collection(date)
+      .get()
+      .toPromise()
+      .then((snap) => {
+        size = snap.size;
       });
-
+    console.log("size: " + size);
+    return size;
   }
 
-  getServices(): AngularFirestoreCollection<Client>{
-    return this.firestore.collection('services').doc(this.userUid).collection('userService');
+  getServices(): AngularFirestoreCollection<Client> {
+    return this.firestore
+      .collection("services")
+      .doc(this.userUid)
+      .collection("booking");
   }
 
-  getServicesDetail(date): AngularFirestoreDocument<Client>{
-    return this.firestore.collection('services').doc(this.userUid).collection('userService').doc(date);
+  getServicesDetail(date): AngularFirestoreDocument<Client> {
+    return this.firestore
+      .collection("services")
+      .doc(this.userUid)
+      .collection("booking")
+      .doc(date);
   }
 
-  getCars(): AngularFirestoreCollection<Client>{
-    return this.firestore.collection('services').doc(this.userUid).collection('userCar');
+  getCars(): AngularFirestoreCollection<Client> {
+    return this.firestore
+      .collection("services")
+      .doc(this.userUid)
+      .collection("booking");
   }
 
   // Sign in with email/password
@@ -189,9 +274,7 @@ export class AuthService implements OnInit {
     return this.firestoreAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(["home"]);
-        });
+        this.router.navigate(["home"]);
         this.updateUserData(result.user);
       })
       .catch((error) => {
@@ -204,6 +287,7 @@ export class AuthService implements OnInit {
     return this.firestoreAuth
       .createUserWithEmailAndPassword(email, password)
       .then(async (result) => {
+        this.router.navigate(["sign-in"]);
         this.SendVerificationMail();
         this.updateUserData(result.user);
       })
@@ -249,9 +333,7 @@ export class AuthService implements OnInit {
     return this.firestoreAuth
       .signInWithPopup(provider)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(["home"]);
-        });
+        this.router.navigate(["home"]);
         this.updateUserData(result.user);
       })
       .catch((error) => {
@@ -271,18 +353,39 @@ export class AuthService implements OnInit {
       email: user.email,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      displayName: user.displayName
+      displayName: user.displayName,
+      roles: {
+        subscriber: true,
+      },
     };
     return userRef.set(data, {
       merge: true,
     });
   }
 
+  private checkAdminAuthorization(user: User, roles: string[]): boolean {
+    if (!user) return false;
+    for (const role of roles) {
+      if (user.roles[role]) {
+        return true;
+      }
+      return false;
+    }
+  }
+
+  admAuthorization(user: User): boolean {
+    const authorized = ["subscriber"];
+    console.log(
+      "Admin autorization: " + this.checkAdminAuthorization(user, authorized)
+    );
+    return this.checkAdminAuthorization(user, authorized);
+  }
+
   // Sign out
   SignOut() {
     return this.firestoreAuth.signOut().then(() => {
       localStorage.removeItem("user");
-      this.router.navigate(["sign-in"]);
+      this.router.navigate([""]);
     });
   }
 }

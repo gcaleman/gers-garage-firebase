@@ -6,4 +6,5 @@ export class Client {
     service: String;
     comments: String;
     status: String;
+    cost: String;
 }

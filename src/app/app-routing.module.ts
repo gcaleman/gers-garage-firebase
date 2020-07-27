@@ -15,6 +15,7 @@ const routes: Routes = [
   },
   {
     path: 'detail/:date',
+    canActivate: [AuthGuard],
     loadChildren: () => import('./pages/detail/detail.module').then( m => m.DetailPageModule)
   },
 

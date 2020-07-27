@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let services of authService.userServices | async" routerLink="/detail/{{services.date}}">
+  <ion-card *ngFor="let services of authService.userServices | async" routerLink="/detail/{{services.carModel}}">
     <ion-card-header>
       {{ services.date }}
     </ion-card-header>
