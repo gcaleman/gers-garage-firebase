@@ -1,9 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>admin</ion-title>
+    <ion-title>Admin</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <form [formGroup]="authService.filterForm" (submit)="runFilter()">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="10">
+          <ion-item>
+            <ion-label>Select a date to filter</ion-label>
+            <ion-datetime
+              displayFormat="DDDD, DD MM YYYY"
+              placeholder="Start date"
+              [ngModel]="startDate"
+              (ionChange)="startDateChanged($event)"
+              formControlName="date"
+            ></ion-datetime>
+            <ion-datetime
+              displayFormat="DDDD, DD MM YYYY"
+              placeholder="End date"
+              [ngModel]="endDate"
+              (ionChange)="endDateChanged($event)"
+              formControlName="date"
+            ></ion-datetime>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-button type="submit">Run</ion-button>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+      <ion-card
+        *ngFor="let services of allServices | async"
+        routerLink="/admin-detail/{{services.date}}/{{services.docId}}/{{services.uid}}"
+      >
+        <ion-card-header>
+          {{ services.date }}
+        </ion-card-header>
+        <ion-card-content>
+          {{ services.carPlateNumb }}
+        </ion-card-content>
+        <ion-card-content>
+          {{ services.docId }}
+        </ion-card-content>
+        <ion-card-content>
+          {{ services.uid }}
+        </ion-card-content>
+      </ion-card>
+  </form>
 </ion-content>

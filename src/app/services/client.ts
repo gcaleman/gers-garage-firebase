@@ -1,4 +1,5 @@
 export class Client {
+    uid: String;
     date: Date;
     carModel: String;
     carColor: String;
@@ -7,4 +8,5 @@ export class Client {
     comments: String;
     status: String;
     cost: String;
+    mechanic: String;
 }

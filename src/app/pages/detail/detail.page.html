@@ -9,17 +9,87 @@
 
 <ion-content padding>
   <h3>Car Info</h3>
-  <p>
-    Car model: {{ (services | async)?.carModel }}
-  </p>
-
-  <h3>Service</h3>
-  <p>
-    Service type: {{ (services | async)?.service }}
-  </p>
-
-  <h3>Status</h3>
-  <p>
-    {{ (services | async)?.status }}
-  </p>
+  <form>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          <strong>Client Info</strong>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          Car model
+        </div>
+      </ion-col>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          {{ (services | async)?.carModel }}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          Service type
+        </div>
+      </ion-col>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          {{ (services | async)?.service }}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          Cost
+        </div>
+      </ion-col>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          {{ (services | async)?.cost }}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          Status
+        </div>
+      </ion-col>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          {{ (services | async)?.status }}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          Comments
+        </div>
+      </ion-col>
+      <ion-col class="colWhite ion-align-items-center">
+        <div>
+          {{ (services | async)?.comments }}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          Mechanic
+        </div>
+      </ion-col>
+      <ion-col class="colGray ion-align-items-center">
+        <div>
+          {{ (services | async)?.mechanic }}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
 </ion-content>

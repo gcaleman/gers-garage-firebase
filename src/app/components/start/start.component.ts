@@ -15,7 +15,7 @@ export class StartComponent implements OnInit {
 
   navigateToLogin() {
     if (this.authService.isLoggedIn) {
-      this.router.navigate(['home']);
+      this.router.navigate(['home/profilepage']);
     } else {
       this.router.navigate(['sign-in']);
     }

@@ -8,7 +8,6 @@ import {
   AngularFirestoreDocument,
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
-import { AngularFireDatabase } from "@angular/fire/database";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Profile } from "./profile";
 
@@ -24,6 +23,7 @@ import { switchMap } from "rxjs/operators";
 
 import { Validator } from "./validator";
 import { Bookings } from "./bookings";
+import { Cars } from "./cars";
 
 @Injectable({
   providedIn: "root",
@@ -31,15 +31,17 @@ import { Bookings } from "./bookings";
 export class AuthService implements OnInit {
   userProfile: Observable<Profile>;
   userServices: Observable<Client>;
+  allServices: Observable<any>;
   bookings: Observable<Bookings>;
-  userCars: Observable<Client>;
   user$: Observable<User>;
+  cars: Observable<Cars>;
+  services;
   userData;
   userUid;
   public addProfileForm: FormGroup;
   public addServiceForm: FormGroup;
+  public filterForm: FormGroup;
   constructor(
-    public db: AngularFireDatabase, // Inject Firestore real time database service
     public firestore: AngularFirestore, // Inject Firestore service
     public firestoreAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
@@ -54,6 +56,10 @@ export class AuthService implements OnInit {
       fName: ["", Validators.required],
       lName: ["", Validators.required],
       userMobile: ["", Validators.required],
+    });
+
+    this.filterForm = formBuilder.group({
+      date: ["", Validators.required],
     });
 
     // Form group for service registration
@@ -92,10 +98,10 @@ export class AuthService implements OnInit {
       })
     );
 
-    this.userServices = this.firestoreAuth.authState.pipe(
+    this.cars = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
-          return this.getServices().valueChanges();
+          return this.getCars().valueChanges();
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -103,10 +109,10 @@ export class AuthService implements OnInit {
       })
     );
 
-    this.userCars = this.firestoreAuth.authState.pipe(
+    this.userServices = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
-          return this.getCars().valueChanges();
+          return this.getServices().valueChanges({ idField: "docId" });
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -168,6 +174,7 @@ export class AuthService implements OnInit {
     const date: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
     console.log(date);
     var count = this.getDateCount(date); // get the date count from the database;
+    var serviceCount = this.getServicesCount(uid, date);
     const carModel: String = this.addServiceForm.value.carModel;
     const carColor: String = this.addServiceForm.value.carColor;
     const carPlateNumb: String = this.addServiceForm.value.carPlateNumb;
@@ -186,16 +193,19 @@ export class AuthService implements OnInit {
       cost = "Waiting avaliation";
     }
 
-    const userRef: AngularFirestoreDocument<Client> = this.firestore
+    const userRef: AngularFirestoreCollection<Client> = this.firestore
       .collection("services")
       .doc(currentUser.uid)
-      .collection("booking")
-      .doc(this.addServiceForm.value.carModel);
-    const userBook: AngularFirestoreCollection<Bookings> = this.firestore
+      .collection("booking");
+    const userCars: AngularFirestoreDocument<Cars> = this.firestore.doc(
+      `cars/${currentUser.uid}`
+    );
+    const allServices: AngularFirestoreCollection<any> = this.firestore
       .collection("services")
-      .doc("dates")
-      .collection(date.toString());
+      .doc("all")
+      .collection("bookings");
     const data = {
+      uid,
       date: date,
       carModel: carModel,
       carColor: carColor,
@@ -204,26 +214,93 @@ export class AuthService implements OnInit {
       comments: comments,
       status: "waiting",
       cost: cost,
+      mechanic: "None",
     };
-    const bookings = {
-      uid: uid,
+    const cars = {
       date: date,
+      uid: currentUser.uid,
+      carModel: carModel,
+      carColor: carColor,
+      carPlateNumb: carPlateNumb,
       service: service,
-      status: "waiting",
     };
     console.log("count: " + (await count));
-    if ((await count) > 2) {
-      window.alert("Date is fully booked. Please choose another one");
-      this.router.navigate(["home"]);
+    if ((await serviceCount) >= 1) {
+      window.alert(
+        "You have already booked for this date. Please choose another one"
+      );
+      this.router.navigate(["home/profilepage"]);
     } else {
-      userBook.add(bookings);
-      return userRef
-        .set(data, {
+      if ((await count) > 10) {
+        window.alert("Date is fully booked. Please choose another one");
+        this.router.navigate(["home/profilepage"]);
+      } else {
+        userCars.set(cars, {
           merge: true,
+        });
+        allServices.add(data);
+        return userRef
+          .add(data)
+          .then(() => {
+            window.alert("Successfully added service.");
+            this.router.navigate(["home/profilepage"]);
+          })
+          .catch((error) => {
+            window.alert(error.message);
+            this.router.navigate(["sign-in"]);
+          });
+      }
+    }
+  }
+
+  async updateService(
+    date,
+    newDate,
+    status,
+    service,
+    mechanic,
+    comments,
+    uid,
+    docId
+  ) {
+    var docIdUser = this.getServicesFromDate(date, uid);
+    var d = newDate.split("T");
+    const nDate: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
+    var count = this.getDateCount(nDate);
+    var mechCount = this.getMechCount(nDate, mechanic);
+    const userRef: AngularFirestoreDocument<Client> = this.firestore
+      .collection("services")
+      .doc(uid)
+      .collection("booking")
+      .doc(await docIdUser);
+    const allServices: AngularFirestoreDocument<any> = this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings")
+      .doc(docId);
+    if ((await count) > 10 || (await mechCount) > 4) {
+      window.alert(
+        "Date or Mechanic is fully booked. Please choose another one"
+      );
+    } else {
+      allServices.update({
+        date: nDate,
+        service: service,
+        comments: comments,
+        status: status,
+        mechanic: mechanic,
+      });
+      return userRef
+        .update({
+          date: nDate,
+          service: service,
+          comments: comments,
+          status: status,
+          mechanic: mechanic,
         })
         .then(() => {
-          window.alert("Successfully added service.");
-          this.router.navigate(["home/profilepage"]);
+          window.alert("Successfully updated.");
+          this.router.navigate(["home/admin"]);
         })
         .catch((error) => {
           window.alert(error.message);
@@ -236,11 +313,95 @@ export class AuthService implements OnInit {
     var size;
     await this.firestore
       .collection("services")
-      .doc("dates")
-      .collection(date)
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
       .get()
       .toPromise()
       .then((snap) => {
+        console.log(snap);
+        size = snap.size;
+      });
+    console.log("size: " + size);
+    return size;
+  }
+
+  async getMechCount(date, mech) {
+    var size;
+    var size1;
+    var size2;
+    var size3;
+    var size4;
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) =>
+        ref
+          .where("date", "==", date)
+          .where("mechanic", "==", mech)
+          .where("service", "==", "Major Repair")
+      )
+      .get()
+      .toPromise()
+      .then((snap) => {
+        size1 = snap.size * 2;
+      });
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) =>
+        ref
+          .where("date", "==", date)
+          .where("mechanic", "==", mech)
+          .where("service", "==", "Repair")
+      )
+      .get()
+      .toPromise()
+      .then((snap) => {
+        size2 = snap.size;
+      });
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) =>
+        ref
+          .where("date", "==", date)
+          .where("mechanic", "==", mech)
+          .where("service", "==", "Annual Service")
+      )
+      .get()
+      .toPromise()
+      .then((snap) => {
+        size3 = snap.size;
+      });
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) =>
+        ref
+          .where("date", "==", date)
+          .where("mechanic", "==", mech)
+          .where("service", "==", "Major Service")
+      )
+      .get()
+      .toPromise()
+      .then((snap) => {
+        size4 = snap.size;
+      });
+    size = size1 + size2 + size3 + size4;
+    console.log("mech size: " + size);
+    return size;
+  }
+
+  async getServicesCount(uid, date) {
+    var size;
+    await this.firestore
+      .collection("services")
+      .doc(uid)
+      .collection("booking", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snap) => {
+        console.log(snap);
         size = snap.size;
       });
     console.log("size: " + size);
@@ -254,6 +415,36 @@ export class AuthService implements OnInit {
       .collection("booking");
   }
 
+  async getServicesFromDate(date, uid) {
+    var id;
+    await this.firestore
+      .collection("services")
+      .doc(uid)
+      .collection("booking", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          id = doc.id;
+        });
+      });
+    console.log("id: " + id);
+    return id;
+  }
+
+  getAllServices(startDate, endDate): AngularFirestoreCollection<any> {
+    return this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) =>
+        ref.where("date", ">=", startDate).where("date", "<=", endDate)
+      );
+  }
+
+  getCars(): AngularFirestoreDocument<Cars> {
+    return this.firestore.collection("cars").doc(this.userUid);
+  }
+
   getServicesDetail(date): AngularFirestoreDocument<Client> {
     return this.firestore
       .collection("services")
@@ -262,11 +453,12 @@ export class AuthService implements OnInit {
       .doc(date);
   }
 
-  getCars(): AngularFirestoreCollection<Client> {
+  getAdminDetail(date, serviceId): AngularFirestoreDocument<any> {
     return this.firestore
       .collection("services")
-      .doc(this.userUid)
-      .collection("booking");
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
+      .doc(serviceId);
   }
 
   // Sign in with email/password
@@ -274,7 +466,7 @@ export class AuthService implements OnInit {
     return this.firestoreAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
-        this.router.navigate(["home"]);
+        this.router.navigate(["home/profilepage"]);
         this.updateUserData(result.user);
       })
       .catch((error) => {
@@ -375,9 +567,6 @@ export class AuthService implements OnInit {
 
   admAuthorization(user: User): boolean {
     const authorized = ["subscriber"];
-    console.log(
-      "Admin autorization: " + this.checkAdminAuthorization(user, authorized)
-    );
     return this.checkAdminAuthorization(user, authorized);
   }
 

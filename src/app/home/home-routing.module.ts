@@ -36,14 +36,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'booking',
-        canActivate: [AuthGuard],
-        loadChildren: () =>
-          import("../pages/booking/booking.module").then(
-            (m) => m.BookingPageModule
-          ),
-      },
-      {
         path: 'services',
         canActivate: [AuthGuard],
         loadChildren: () =>

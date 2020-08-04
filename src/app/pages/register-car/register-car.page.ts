@@ -55,8 +55,6 @@ export class RegisterCarPage implements OnInit {
   */
   dateChanged(date) {
     var array = [];
-    
-    /* const count = this.authService.getDateCount(date); */
 
     for (let index = 0; index < RegisterCarPage.invalidDates.length; index++) {
       var arr = RegisterCarPage.invalidDates[index].split("T");

@@ -12,27 +12,22 @@
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="profile">
         <ion-icon name="triangle"></ion-icon>
-        <ion-label>Profile</ion-label>
+        <ion-label>Update Profile</ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="register-car">
         <ion-icon name="ellipse"></ion-icon>
-        <ion-label>Register car</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button tab="booking">
-        <ion-icon name="square"></ion-icon>
-        <ion-label>Booking</ion-label>
+        <ion-label>Register Service</ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="services">
         <ion-icon name="square"></ion-icon>
-        <ion-label>Services</ion-label>
+        <ion-label>Your Services</ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="admin" *ngIf="authService.admAuthorization(user)">
         <ion-icon name="square"></ion-icon>
-        <ion-label>Admin Services</ion-label>
+        <ion-label>Manage Services</ion-label>
       </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>
