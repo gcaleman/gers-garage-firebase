@@ -62,6 +62,9 @@ export class AdminDetailPage implements OnInit {
   getUserUid() {
     return this.route.snapshot.paramMap.get("uid");
   }
+  getId() {
+    return this.route.snapshot.paramMap.get("id");
+  }
 
   generatePDF(date) {
     pdfmake.vfs = pdfFonts.pdfMake.vfs;

@@ -17,7 +17,6 @@ export class Validator {
         valid = false;
       }
     }
-    console.log(valid);
     if (valid) {
       return null;
     } else {

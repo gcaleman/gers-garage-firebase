@@ -9,4 +9,5 @@ export class Client {
     status: String;
     cost: String;
     mechanic: String;
+    id: String;
 }

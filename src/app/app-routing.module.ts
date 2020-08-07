@@ -21,7 +21,7 @@ const routes: Routes = [
       import("./pages/detail/detail.module").then((m) => m.DetailPageModule),
   },
   {
-    path: "admin-detail/:date/:docId/:uid",
+    path: "admin-detail/:date/:docId/:uid/:id",
     canActivate: [AdminGuard, AuthGuard],
     loadChildren: () =>
       import("./pages/admin-detail/admin-detail.module").then(

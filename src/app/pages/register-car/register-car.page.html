@@ -10,15 +10,26 @@
     (submit)="authService.createClientService()"
   >
     <ion-item>
+      <ion-label stacked>Select your car model</ion-label>
+    <ion-select placeholder="Select One" formControlName="carModel" required>
+        <ion-select-option value="Honda">Honda</ion-select-option>
+        <ion-select-option value="Pegeout">Pegeout</ion-select-option>
+        <ion-select-option value="Toyta">Toyta</ion-select-option>
+        <ion-select-option value="Ferrari">Ferrari</ion-select-option>
+        <ion-select-option value="Other">Other</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="authService.getOtherCarModel()">
+    <ion-item>
       <ion-label stacked>Car Model</ion-label>
-        <ion-input
-        formControlName="carModel"
+      <ion-input
+        formControlName="otherModel"
         type="text"
-        required
-        placeholder="Type in your car model (e.g. 'Honda Civic')."
+        placeholder="Type in your car model (e.g. 'Honda')."
       >
       </ion-input>
     </ion-item>
+  </div>
     <ion-item>
       <ion-label stacked>Car Color</ion-label>
       <ion-input
@@ -63,11 +74,19 @@
     </ion-item>
     <ion-item>
       <ion-label>Select a date</ion-label>
-      <ion-datetime displayFormat="DDDD, DD MM YYYY" [min]="myDate" placeholder="Select date" [ngModel]="myDate" (ionChange)="dateChanged($event)" formControlName="date"></ion-datetime>
+      <ion-datetime
+        displayFormat="DDDD, DD MM YYYY"
+        [min]="myDate"
+        placeholder="Select date"
+        [ngModel]="myDate"
+        (ionChange)="dateChanged($event)"
+        formControlName="date"
+      ></ion-datetime>
     </ion-item>
     <ion-row>
       <ion-col>
         <ion-button
+        *ngIf="authService.showButton()"
           type="submit"
           color="danger"
           expand="block"

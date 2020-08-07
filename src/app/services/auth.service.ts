@@ -60,6 +60,7 @@ export class AuthService implements OnInit {
 
     this.filterForm = formBuilder.group({
       date: ["", Validators.required],
+      status: ["", Validators.required],
     });
 
     // Form group for service registration
@@ -69,6 +70,7 @@ export class AuthService implements OnInit {
         Validators.compose([Validator.validDate, Validators.required])
       ),
       carModel: ["", Validators.required],
+      otherModel: [""],
       carColor: ["", Validators.required],
       carPlateNumb: ["", Validators.required],
       service: ["", Validators.required],
@@ -167,15 +169,50 @@ export class AuthService implements OnInit {
       });
   }
 
+  getOtherCarModel(): Boolean{
+    const carModel: String = this.addServiceForm.value.carModel; 
+    if (carModel == "Other"){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getCarModel() {
+    const carModel: String = this.addServiceForm.value.carModel; 
+    const otherModel: String = this.addServiceForm.value.otherModel;
+    if (carModel == "Other"){
+      return otherModel;
+    } else {
+      return carModel;
+    }
+  }
+
+  showButton(): Boolean{
+    var valid = true;
+    const carModel: String = this.addServiceForm.value.carModel;
+    const otherModel: String = this.addServiceForm.value.otherModel;
+    if(carModel == "Other"){
+      if (!otherModel) {
+        valid = false;
+      } else {
+        valid = true;
+      }
+    } else {
+      valid = true;
+    }
+    return valid;
+  }
+
   async createClientService() {
     var currentUser = await this.firestoreAuth.currentUser;
     var d = this.addServiceForm.value.date.split("T");
     const uid: String = currentUser.uid;
+    const id: String = this.firestore.createId();
     const date: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
     console.log(date);
     var count = this.getDateCount(date); // get the date count from the database;
     var serviceCount = this.getServicesCount(uid, date);
-    const carModel: String = this.addServiceForm.value.carModel;
     const carColor: String = this.addServiceForm.value.carColor;
     const carPlateNumb: String = this.addServiceForm.value.carPlateNumb;
     const service: String = this.addServiceForm.value.service;
@@ -207,7 +244,7 @@ export class AuthService implements OnInit {
     const data = {
       uid,
       date: date,
-      carModel: carModel,
+      carModel: this.getCarModel(),
       carColor: carColor,
       carPlateNumb: carPlateNumb,
       service: service,
@@ -215,11 +252,12 @@ export class AuthService implements OnInit {
       status: "waiting",
       cost: cost,
       mechanic: "None",
+      id,
     };
     const cars = {
       date: date,
       uid: currentUser.uid,
-      carModel: carModel,
+      carModel: this.getCarModel(),
       carColor: carColor,
       carPlateNumb: carPlateNumb,
       service: service,
@@ -261,9 +299,10 @@ export class AuthService implements OnInit {
     mechanic,
     comments,
     uid,
-    docId
+    docId,
+    id
   ) {
-    var docIdUser = this.getServicesFromDate(date, uid);
+    var docIdUser = this.getServicesFromDate(date, uid, id);
     var d = newDate.split("T");
     const nDate: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
     var count = this.getDateCount(nDate);
@@ -415,12 +454,14 @@ export class AuthService implements OnInit {
       .collection("booking");
   }
 
-  async getServicesFromDate(date, uid) {
+  async getServicesFromDate(date, uid, docId) {
     var id;
     await this.firestore
       .collection("services")
       .doc(uid)
-      .collection("booking", (ref) => ref.where("date", "==", date))
+      .collection("booking", (ref) =>
+        ref.where("date", "==", date).where("id", "==", docId)
+      )
       .get()
       .toPromise()
       .then((snapshot) => {
@@ -433,12 +474,26 @@ export class AuthService implements OnInit {
   }
 
   getAllServices(startDate, endDate): AngularFirestoreCollection<any> {
-    return this.firestore
-      .collection("services")
-      .doc("all")
-      .collection("bookings", (ref) =>
-        ref.where("date", ">=", startDate).where("date", "<=", endDate)
-      );
+    const status: String = this.filterForm.value.status;
+    console.log("status: " + status);
+    if (status) {
+      return this.firestore
+        .collection("services")
+        .doc("all")
+        .collection("bookings", (ref) =>
+          ref
+            .where("date", ">=", startDate)
+            .where("date", "<=", endDate)
+            .where("status", "==", status)
+        );
+    } else {
+      return this.firestore
+        .collection("services")
+        .doc("all")
+        .collection("bookings", (ref) =>
+          ref.where("date", ">=", startDate).where("date", "<=", endDate)
+        );
+    }
   }
 
   getCars(): AngularFirestoreDocument<Cars> {
