@@ -23,7 +23,7 @@ import { switchMap } from "rxjs/operators";
 
 import { Validator } from "./validator";
 import { Bookings } from "./bookings";
-import { Cars } from "./cars";
+import { Vehicles } from "./vehicles";
 
 @Injectable({
   providedIn: "root",
@@ -34,7 +34,7 @@ export class AuthService implements OnInit {
   allServices: Observable<any>;
   bookings: Observable<Bookings>;
   user$: Observable<User>;
-  cars: Observable<Cars>;
+  vehicles: Observable<Vehicles>;
   services;
   userData;
   userUid;
@@ -69,10 +69,10 @@ export class AuthService implements OnInit {
         "",
         Validators.compose([Validator.validDate, Validators.required])
       ),
-      carModel: ["", Validators.required],
+      vehicleModel: ["", Validators.required],
       otherModel: [""],
-      carColor: ["", Validators.required],
-      carPlateNumb: ["", Validators.required],
+      vehicleColor: ["", Validators.required],
+      vehiclePlateNumb: ["", Validators.required],
       service: ["", Validators.required],
       comments: [""],
     });
@@ -100,10 +100,10 @@ export class AuthService implements OnInit {
       })
     );
 
-    this.cars = this.firestoreAuth.authState.pipe(
+    this.vehicles = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
-          return this.getCars().valueChanges();
+          return this.getVehicles().valueChanges();
         } else {
           window.Error("Please Log in!");
           return of(null);
@@ -154,6 +154,7 @@ export class AuthService implements OnInit {
       fName: fName,
       lName: lName,
       mobile: mobile,
+      uid: currentUser.uid,
     };
     return userRef
       .set(data, {
@@ -169,30 +170,30 @@ export class AuthService implements OnInit {
       });
   }
 
-  getOtherCarModel(): Boolean{
-    const carModel: String = this.addServiceForm.value.carModel; 
-    if (carModel == "Other"){
+  getOtherVehicleModel(): Boolean {
+    const vehicleModel: String = this.addServiceForm.value.vehicleModel;
+    if (vehicleModel == "Other") {
       return true;
     } else {
       return false;
     }
   }
 
-  getCarModel() {
-    const carModel: String = this.addServiceForm.value.carModel; 
+  getVehicleModel() {
+    const vehicleModel: String = this.addServiceForm.value.vehicleModel;
     const otherModel: String = this.addServiceForm.value.otherModel;
-    if (carModel == "Other"){
+    if (vehicleModel == "Other") {
       return otherModel;
     } else {
-      return carModel;
+      return vehicleModel;
     }
   }
 
-  showButton(): Boolean{
+  showButton(): Boolean {
     var valid = true;
-    const carModel: String = this.addServiceForm.value.carModel;
+    const vehicleModel: String = this.addServiceForm.value.vehicleModel;
     const otherModel: String = this.addServiceForm.value.otherModel;
-    if(carModel == "Other"){
+    if (vehicleModel == "Other") {
       if (!otherModel) {
         valid = false;
       } else {
@@ -213,18 +214,18 @@ export class AuthService implements OnInit {
     console.log(date);
     var count = this.getDateCount(date); // get the date count from the database;
     var serviceCount = this.getServicesCount(uid, date);
-    const carColor: String = this.addServiceForm.value.carColor;
-    const carPlateNumb: String = this.addServiceForm.value.carPlateNumb;
+    const vehicleColor: String = this.addServiceForm.value.vehicleColor;
+    const vehiclePlateNumb: String = this.addServiceForm.value.vehiclePlateNumb;
     const service: String = this.addServiceForm.value.service;
     const comments: String = this.addServiceForm.value.comments;
     var cost: String;
-    if (service.includes("Repair")) {
+    if (service === "Repair") {
       cost = "$50";
-    } else if (service.includes("Major Repair")) {
+    } else if (service === "Major Repair") {
       cost = "$100";
-    } else if (service.includes("Annual Service")) {
+    } else if (service === "Annual Service") {
       cost = "$200";
-    } else if (service.includes("Major Service")) {
+    } else if (service === "Major Service") {
       cost = "$250";
     } else {
       cost = "Waiting avaliation";
@@ -234,8 +235,8 @@ export class AuthService implements OnInit {
       .collection("services")
       .doc(currentUser.uid)
       .collection("booking");
-    const userCars: AngularFirestoreDocument<Cars> = this.firestore.doc(
-      `cars/${currentUser.uid}`
+    const userVehicles: AngularFirestoreDocument<Vehicles> = this.firestore.doc(
+      `vehicles/${currentUser.uid}`
     );
     const allServices: AngularFirestoreCollection<any> = this.firestore
       .collection("services")
@@ -244,22 +245,23 @@ export class AuthService implements OnInit {
     const data = {
       uid,
       date: date,
-      carModel: this.getCarModel(),
-      carColor: carColor,
-      carPlateNumb: carPlateNumb,
+      vehicleModel: this.getVehicleModel(),
+      vehicleColor: vehicleColor,
+      vehiclePlateNumb: vehiclePlateNumb,
       service: service,
       comments: comments,
       status: "waiting",
       cost: cost,
       mechanic: "None",
       id,
+      vehiclePieces: null,
     };
-    const cars = {
+    const vehicles = {
       date: date,
       uid: currentUser.uid,
-      carModel: this.getCarModel(),
-      carColor: carColor,
-      carPlateNumb: carPlateNumb,
+      vehicleModel: this.getVehicleModel(),
+      vehicleColor: vehicleColor,
+      vehiclePlateNumb: vehiclePlateNumb,
       service: service,
     };
     console.log("count: " + (await count));
@@ -273,7 +275,7 @@ export class AuthService implements OnInit {
         window.alert("Date is fully booked. Please choose another one");
         this.router.navigate(["home/profilepage"]);
       } else {
-        userCars.set(cars, {
+        userVehicles.set(vehicles, {
           merge: true,
         });
         allServices.add(data);
@@ -300,13 +302,31 @@ export class AuthService implements OnInit {
     comments,
     uid,
     docId,
-    id
+    id,
+    vehiclePieces,
   ) {
     var docIdUser = this.getServicesFromDate(date, uid, id);
+
     var d = newDate.split("T");
+
     const nDate: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
     var count = this.getDateCount(nDate);
     var mechCount = this.getMechCount(nDate, mechanic);
+
+    var cost;
+
+    if (service === "Repair") {
+      cost = 50;
+    } else if (service === "Major Repair") {
+      cost = 100;
+    } else if (service === "Annual Service") {
+      cost = 200;
+    } else if (service === "Major Service") {
+      cost = 250;
+    } else {
+      cost = 0;
+    }
+    const stringCost = "$"+cost.toString();
     const userRef: AngularFirestoreDocument<Client> = this.firestore
       .collection("services")
       .doc(uid)
@@ -323,19 +343,23 @@ export class AuthService implements OnInit {
       );
     } else {
       allServices.update({
+        cost: stringCost,
         date: nDate,
         service: service,
         comments: comments,
         status: status,
         mechanic: mechanic,
+        vehiclePieces: vehiclePieces,
       });
       return userRef
         .update({
+          cost: stringCost,
           date: nDate,
           service: service,
           comments: comments,
           status: status,
           mechanic: mechanic,
+          vehiclePieces: vehiclePieces,
         })
         .then(() => {
           window.alert("Successfully updated.");
@@ -347,6 +371,61 @@ export class AuthService implements OnInit {
         });
     }
   }
+
+  /* addDataPieces() {
+    const pieces: AngularFirestoreCollection<any> = this.firestore.collection(
+      "pieces"
+    );
+    const vehiclePieces = [
+      {
+        id: 1,
+        name: "Unexposed bumper",
+        value: 25,
+      },
+      { id: 3, value: 25, name: "Exposed Bumper" },
+      { id: 4, value: 20, name: "Cowl screen" },
+      { id: 5, value: 20, name: "Decklid" },
+      { id: 6, value: 30, name: "Fascia rear and support" },
+      { id: 7, value: 20, name: "Fender" },
+      { id: 8, value: 25, name: "Front clip" },
+      { id: 9, value: 25, name: "Front fascia and header panel" },
+      { id: 10, value: 25, name: "Grille" },
+      { id: 11, value: 20, name: "Pillar and hard trim" },
+      { id: 12, value: 30, name: "Quarter panel" },
+      { id: 13, value: 40, name: "Radiator core support" },
+      { id: 14, value: 30, name: "Rocker" },
+      { id: 15, value: 20, name: "Roof rack" },
+      { id: 16, value: 20, name: "Spoiler" },
+      { id: 17, value: 20, name: "Front spoiler" },
+      { id: 18, value: 20, name: "Rear spoiler" },
+      { id: 19, value: 10, name: "Rims" },
+      { id: 20, value: 10, name: "Hubcap" },
+      { id: 21, value: 40, name: "Tire/Tyre" },
+      { id: 22, value: 25, name: "Trim package" },
+      { id: 23, value: 15, name: "Trunk/boot/hatch" },
+      { id: 24, value: 15, name: "Trunk/boot latch" },
+      { id: 25, value: 20, name: "Valance" },
+      { id: 26, value: 20, name: "Welded assembly" },
+      { id: 27, value: 10, name: "Ammeter" },
+      { id: 28, value: 10, name: "Clinometer" },
+      { id: 29, value: 10, name: "Dynamometer" },
+      { id: 30, value: 10, name: "Fuel gauge" },
+      { id: 31, value: 20, name: "Manometer" },
+      { id: 32, value: 20, name: "Hydrometer" },
+      { id: 33, value: 30, name: "Odometer" },
+      { id: 34, value: 30, name: "Speedometer" },
+      { id: 35, value: 30, name: "Tachometer" },
+      { id: 36, value: 20, name: "Temperature gauge" },
+      { id: 37, value: 10, name: "Tire pressure gauge" },
+      { id: 38, value: 10, name: "Vacuum gauge" },
+      { id: 39, value: 40, name: "Voltmeter" },
+      { id: 40, value: 20, name: "Water temperature meter" },
+      { id: 41, value: 30, name: "Oil pressure gauge" },
+    ];
+    for (let index = 0; index < vehiclePieces.length; index++) {
+      pieces.add(vehiclePieces[index]);
+    }
+  } */
 
   async getDateCount(date) {
     var size;
@@ -473,6 +552,144 @@ export class AuthService implements OnInit {
     return id;
   }
 
+  async getServiceType(docId) {
+    var service;
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          service = doc.data().service;
+        });
+      });
+    return service;
+  }
+
+  async getClientVehicle(docId) {
+    var model;
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          model = doc.data().vehicleModel;
+        });
+      });
+    return model;
+  }
+
+  async getClientVehiclePlate(docId) {
+    var plate;
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          plate = doc.data().vehiclePlateNumb;
+        });
+      });
+    return plate;
+  }
+
+  async getClientFName(uid) {
+    var fName;
+    await this.firestore
+      .collection("profileData", (ref) => ref.where("uid", "==", uid))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          fName = doc.data().fName;
+        });
+      });
+    return fName;
+  }
+
+  async getClientLName(uid) {
+    var lName;
+    await this.firestore
+      .collection("profileData", (ref) => ref.where("uid", "==", uid))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          lName = doc.data().lName;
+        });
+      });
+    return lName;
+  }
+
+  async getClientMobile(uid) {
+    var mobile;
+    await this.firestore
+      .collection("profileData", (ref) => ref.where("uid", "==", uid))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          mobile = doc.data().mobile;
+        });
+      });
+    return mobile;
+  }
+
+  async getPiecesId(docId) {
+    var id: Number[];
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          id = doc.data().vehiclePieces;
+        });
+      });
+    console.log("id: " + id);
+    return id;
+  }
+
+  async getPieceName(id: number) {
+    var name: string;
+    console.log("id from get name method: " + id);
+    await this.firestore
+      .collection("pieces", (ref) => ref.where("id", "==", id))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          name = doc.data().name;
+        });
+      });
+    console.log("name: " + name);
+    return name;
+  }
+
+  async getPieceValue(id: number) {
+    var value: number;
+    await this.firestore
+      .collection("pieces", (ref) => ref.where("id", "==", id))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          value = doc.data().value;
+        });
+      });
+    console.log("value: " + value);
+    return value;
+  }
+
   getAllServices(startDate, endDate): AngularFirestoreCollection<any> {
     const status: String = this.filterForm.value.status;
     console.log("status: " + status);
@@ -496,8 +713,8 @@ export class AuthService implements OnInit {
     }
   }
 
-  getCars(): AngularFirestoreDocument<Cars> {
-    return this.firestore.collection("cars").doc(this.userUid);
+  getVehicles(): AngularFirestoreDocument<Vehicles> {
+    return this.firestore.collection("vehicles").doc(this.userUid);
   }
 
   getServicesDetail(date): AngularFirestoreDocument<Client> {
@@ -548,7 +765,7 @@ export class AuthService implements OnInit {
     return (await this.firestoreAuth.currentUser)
       .sendEmailVerification()
       .then(() => {
-        this.router.navigate(["verify-email"]);
+        this.router.navigate(["sign-in"]);
       });
   }
 
@@ -621,7 +838,7 @@ export class AuthService implements OnInit {
   }
 
   admAuthorization(user: User): boolean {
-    const authorized = ["subscriber"];
+    const authorized = ["admin"];
     return this.checkAdminAuthorization(user, authorized);
   }
 

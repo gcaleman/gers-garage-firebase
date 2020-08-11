@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content padding>
-  <h3>Car Info</h3>
+  <h3>Service Information</h3>
   <form>
   <ion-grid>
     <ion-row>
@@ -26,17 +26,17 @@
     <ion-row>
       <ion-col class="colWhite ion-align-items-center">
         <div>
-          Car model
+          Vehicle model
         </div>
       </ion-col>
       <ion-col class="colWhite ion-align-items-center">
         <div>
-          {{ (services | async)?.carModel }}
+          {{ (services | async)?.vehicleModel }}
         </div>
       </ion-col>
       <ion-col class="colWhite ion-align-items-center">
         <div>
-          {{ (services | async)?.carModel }}
+          {{ (services | async)?.vehicleModel }}
         </div>
       </ion-col>
     </ion-row>
@@ -90,7 +90,7 @@
       <ion-col class="colGray ion-align-items-center">
         <div>
           <ion-item>
-            <ion-select interface="popover" placeholder="Select One" #service>
+            <ion-select interface="popover" placeholder="Select One" required #service>
               <ion-select-option value="Annual Service"
                 >Annual Service</ion-select-option
               >
@@ -120,17 +120,8 @@
       <ion-col class="colWhite" size="4">
         <div>
           <ion-item>
-          <ion-select placeholder="Select Items" multiple="true" cancelText="Cancel" okText="Confirm">
-            <ion-select-option value="tire">Change Tire</ion-select-option>
-            <ion-select-option value="screen">Broken Screen</ion-select-option>
-            <ion-select-option value="wheelBalancing">Wheel Balancing</ion-select-option>
-            <ion-select-option value="peppers">Green Peppers</ion-select-option>
-            <ion-select-option value="mushrooms">Mushrooms</ion-select-option>
-            <ion-select-option value="onions">Onions</ion-select-option>
-            <ion-select-option value="pepperoni">Pepperoni</ion-select-option>
-            <ion-select-option value="pineapple">Pineapple</ion-select-option>
-            <ion-select-option value="sausage">Sausage</ion-select-option>
-            <ion-select-option value="Spinach">Spinach</ion-select-option>
+          <ion-select placeholder="Select Items" multiple="true" cancelText="Cancel" okText="Confirm" required #pieces>
+            <ion-select-option *ngFor="let vehiclePiece of vehiclePieces" [value]="vehiclePiece.id">{{ vehiclePiece.name }} - ${{ vehiclePiece.value }}</ion-select-option>
           </ion-select>
         </ion-item>
         </div>
@@ -150,12 +141,13 @@
       <ion-col class="colGray ion-align-items-center">
         <div>
           <ion-item>
-            <ion-select interface="popover" placeholder="Select Status" #status>
+            <ion-select interface="popover" placeholder="Select Status" required #status>
               <ion-select-option value="Booked">Booked</ion-select-option>
               <ion-select-option value="InService">In Service</ion-select-option>
               <ion-select-option value="Fixed">Fixed</ion-select-option>
               <ion-select-option value="Collected">Collected</ion-select-option>
               <ion-select-option value="Unrepairable">Unrepairable</ion-select-option>
+              <ion-select-option value="Cancelled">Cancelled</ion-select-option>
             </ion-select>
           </ion-item>
         </div>
@@ -192,7 +184,7 @@
       <ion-col class="colGray ion-align-items-center">
         <div>
           <ion-item>
-          <ion-select interface="popover" placeholder="Select Mechanic" #mechanic>
+          <ion-select interface="popover" placeholder="Select Mechanic" required #mechanic>
             <ion-select-option value="mech1">Mechanic 1</ion-select-option>
             <ion-select-option value="mech2">Mechanic 2</ion-select-option>
             <ion-select-option value="mech3">Mechanic 3</ion-select-option>
@@ -207,9 +199,9 @@
     <ion-col>
       <ion-button
         type="submit"
-        color="danger"
+        color="primary"
         expand="block"
-        (click)="authService.updateService(getDate(), newDate.value, status.value, service.value, mechanic.value, comments.value, getUserUid(), getDocUid(), getId())"
+        (click)="authService.updateService(getDate(), newDate.value, status.value, service.value, mechanic.value, comments.value, getUserUid(), getDocUid(), getId(), pieces.value)"
         >Update Service</ion-button
       >
     </ion-col>
@@ -217,10 +209,11 @@
   <ion-row>
     <ion-col>
       <ion-button
+      *ngIf="checkStatus()"
         type="submit"
-        color="danger"
+        color="primary"
         expand="block"
-        (click)="generatePDF(newDate.value)"
+        (click)="generatePDF()"
         >Generate PDF Document</ion-button
       >
     </ion-col>

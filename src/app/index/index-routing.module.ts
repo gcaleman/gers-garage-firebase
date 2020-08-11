@@ -30,6 +30,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'recover-password',
+        loadChildren: () =>
+          import("../pages/recover-password/recover-password.module").then(
+            (m) => m.RecoverPasswordPageModule
+          ),
+      },
+      {
         path: 'services',
         loadChildren: () =>
           import("../pages/services/services.module").then(

@@ -13,6 +13,41 @@ import { Router, ActivatedRoute } from "@angular/router";
 export class RegisterCarPage implements OnInit {
   myDate = new Date().toISOString(); /* variable gets the current date and save as an ISOString object */
 
+  vehicles = [
+    {type: "Toyta Corolla", value: "Toyta Corolla"},
+    {type: "Toyota Camry", value: "Toyota Camry"},
+    {type: "Toyota Vios", value: "Toyota Vios"},
+    {type: "Toyota Wigo", value: "Toyota Wigo"},
+    {type: "Toyota Yaris", value: "Toyota Yaris"},
+    {type: "BMW X6", value: "BMW X6"},
+    {type: "BMW X3", value: "BMW X3"},
+    {type: "BMW X4", value: "Toyta Corolla"},
+    {type: "BMW 5 Series", value: "BMW 5 Series"},
+    {type: "BMW X5", value: "BMW X5"},
+    {type: "BMW 6 Series", value: "BMW 6 Series"},
+    {type: "Mitsubishi ASX Model", value: "Mitsubishi ASX Modela"},
+    {type: "Mitsubishi Mirage", value: "Mitsubishi Mirage"},
+    {type: "Mitsubishi Montero Sport", value: "Mitsubishi Montero Sport"},
+    {type: "Mitsubishi Pajero", value: "Mitsubishi Pajero"},
+    {type: "Peugeot 508", value: "Peugeot 508"},
+    {type: "Peugeot Expert Tepee", value: "Peugeot Expert Tepee"},
+    {type: "Peugeot 5008", value: "Peugeot 5008"},
+    {type: "Peugeot 3008", value: "Peugeot 3008"},
+    {type: "Peugeot 2008", value: "Peugeot 2008"},
+    {type: "Ford EcoSport", value: "Ford EcoSport"},
+    {type: "Ford Everest", value: "Ford Everest"},
+    {type: "Ford Expedition", value: "Ford Expedition"},
+    {type: "Ford Explorer", value: "Ford Explorer"},
+    {type: "Yamaha YZF-R1", value: "Yamaha YZF-R1"},
+    {type: "Yamaha’s Tracer 900", value: "Yamaha’s Tracer 900"},
+    {type: "KTM 890 DUKE R", value: "KTM 890 DUKE R"},
+    {type: "Triumph Rocket 3", value: "Triumph Rocket 3"},
+    {type: "Ford Transit", value: "Toyta Corolla"},
+    {type: "Fiat Ducato", value: "Fiat Ducato"},
+    {type: "Mercedes-Benz Vario", value: "Mercedes-Benz Vario"},
+    {type: "Other", value: "Other"},
+  ]
+
   static invalidDates = [];
   dateSundays: Date = new Date(
     2020,

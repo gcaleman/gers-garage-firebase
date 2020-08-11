@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content padding>
-  <h3>Car Info</h3>
+  <h3>Service Information</h3>
   <form>
   <ion-grid>
     <ion-row>
@@ -21,12 +21,12 @@
     <ion-row>
       <ion-col class="colWhite ion-align-items-center">
         <div>
-          Car model
+          Vehicle model
         </div>
       </ion-col>
       <ion-col class="colWhite ion-align-items-center">
         <div>
-          {{ (services | async)?.carModel }}
+          {{ (services | async)?.vehicleModel }}
         </div>
       </ion-col>
     </ion-row>

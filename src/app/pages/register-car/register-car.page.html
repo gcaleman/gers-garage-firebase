@@ -10,43 +10,39 @@
     (submit)="authService.createClientService()"
   >
     <ion-item>
-      <ion-label stacked>Select your car model</ion-label>
-    <ion-select placeholder="Select One" formControlName="carModel" required>
-        <ion-select-option value="Honda">Honda</ion-select-option>
-        <ion-select-option value="Pegeout">Pegeout</ion-select-option>
-        <ion-select-option value="Toyta">Toyta</ion-select-option>
-        <ion-select-option value="Ferrari">Ferrari</ion-select-option>
-        <ion-select-option value="Other">Other</ion-select-option>
+      <ion-label stacked>Select your vehicle model</ion-label>
+    <ion-select placeholder="Select One" multiple="false" interface="popover" formControlName="vehicleModel" required>
+        <ion-select-option *ngFor="let vehicle of vehicles" [value]="vehicle.value">{{vehicle.type}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <div *ngIf="authService.getOtherCarModel()">
+    <div *ngIf="authService.getOtherVehicleModel()">
     <ion-item>
-      <ion-label stacked>Car Model</ion-label>
+      <ion-label stacked>Vehicle Model</ion-label>
       <ion-input
         formControlName="otherModel"
         type="text"
-        placeholder="Type in your car model (e.g. 'Honda')."
+        placeholder="Type in your vehicle model (e.g. 'Honda')."
       >
       </ion-input>
     </ion-item>
   </div>
     <ion-item>
-      <ion-label stacked>Car Color</ion-label>
+      <ion-label stacked>Vehicle Colour</ion-label>
       <ion-input
-        formControlName="carColor"
+        formControlName="vehicleColor"
         type="text"
         required
-        placeholder="Type in your car color (e.g. 'Black')."
+        placeholder="Type in your vehicle colour (e.g. 'Black')."
       >
       </ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Plate Number</ion-label>
       <ion-input
-        formControlName="carPlateNumb"
+        formControlName="vehiclePlateNumb"
         type="text"
         required
-        placeholder="Type in your car plate number."
+        placeholder="Type in your vehicle plate number."
       >
       </ion-input>
     </ion-item>
@@ -88,7 +84,7 @@
         <ion-button
         *ngIf="authService.showButton()"
           type="submit"
-          color="danger"
+          color="primary"
           expand="block"
           [disabled]="!authService.addServiceForm.valid"
           >Continue</ion-button
