@@ -1,19 +1,104 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>register-car</ion-title>
+    <ion-title>Register Service</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="authService.addServiceForm" (submit)="">
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" #userEmail required></ion-input>
+  <form
+    [formGroup]="authService.addServiceForm"
+    (submit)="authService.createClientService()"
+  >
+    <ion-item>
+      <ion-label stacked>Select your vehicle model</ion-label>
+      <ion-select
+        placeholder="Select One"
+        multiple="false"
+        interface="popover"
+        formControlName="vehicleModel"
+        required
+      >
+        <ion-select-option
+          *ngFor="let vehicle of vehicles"
+          [value]="vehicle.value"
+          >{{vehicle.type}}</ion-select-option
+        >
+      </ion-select>
     </ion-item>
-    
+    <div *ngIf="authService.getOtherVehicleModel()">
+      <ion-item>
+        <ion-label stacked>Vehicle Model</ion-label>
+        <ion-input
+          formControlName="otherModel"
+          type="text"
+          placeholder="Type in your vehicle model (e.g. 'Honda')."
+        >
+        </ion-input>
+      </ion-item>
+    </div>
+    <ion-item>
+      <ion-label stacked>Vehicle Colour</ion-label>
+      <ion-input
+        formControlName="vehicleColor"
+        type="text"
+        required
+        placeholder="Type in your vehicle colour (e.g. 'Black')."
+      >
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Plate Number</ion-label>
+      <ion-input
+        formControlName="vehiclePlateNumb"
+        type="text"
+        required
+        placeholder="Type in your vehicle plate number."
+      >
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Select a Service</ion-label>
+      <ion-select placeholder="Select One" formControlName="service" required>
+        <ion-select-option value="Annual Service"
+          >Annual Service</ion-select-option
+        >
+        <ion-select-option value="Major Service"
+          >Major Service</ion-select-option
+        >
+        <ion-select-option value="Repair">Repair</ion-select-option>
+        <ion-select-option value="Major Repair">Major Repair</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Comments</ion-label>
+      <ion-input
+        formControlName="comments"
+        type="text"
+        placeholder="Type in your car problem. (e.g. 'Flat tire')"
+      >
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Select a date</ion-label>
+      <ion-datetime
+        displayFormat="DDDD, DD MM YYYY"
+        [min]="todayDateString"
+        placeholder="Select date"
+        [ngModel]="todayDateString"
+        (ionChange)="dateChanged($event)"
+        formControlName="date"
+      ></ion-datetime>
+    </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" color="danger" expand="block">Sign Up</ion-button>
+        <ion-button
+          *ngIf="authService.showButton()"
+          type="submit"
+          color="primary"
+          expand="block"
+          [disabled]="!authService.addServiceForm.valid"
+          >Continue</ion-button
+        >
       </ion-col>
     </ion-row>
   </form>

@@ -1,9 +1,25 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>services</ion-title>
+    <ion-title>Your Services</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-card *ngFor="let services of authService.userServices | async" routerLink="/detail/{{services.docId}}">
+    <ion-card-header>
+     Date: {{ services.date }}
+    </ion-card-header>
+    <ion-card-content>
+     Service: {{ services.service }}
+    </ion-card-content>
+    <ion-card-content>
+      Vehicle: {{ services.vehicleModel }}
+     </ion-card-content>
+    <ion-card-content hidden>
+      {{ services.uid }}
+    </ion-card-content>
+    <ion-card-content hidden>
+      {{services.docId}}
+    </ion-card-content>    
+  </ion-card>
 </ion-content>

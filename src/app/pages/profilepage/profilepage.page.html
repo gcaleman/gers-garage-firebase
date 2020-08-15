@@ -1,18 +1,25 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>profilepage</ion-title>
+    <ion-title>Your Profile</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-card *ngIf="authService.userProfile | async as profile;">
     <ion-card-header>
-      <h1>Hello: <strong>{{ profile.fName }}</strong></h1>
-      <p>Number: <strong>{{ profile.mobile }}</strong></p>
+      <h2><strong>Hello, {{ profile.fName }}</strong></h2>
+      <p>Mobile Number: <strong>{{ profile.mobile }}</strong></p>
       <p>Surname: {{ profile.lName }}</p>
     </ion-card-header>
-    <ion-card-content>
-      Last Name:
-    </ion-card-content>
   </ion-card>
+  <ion-card *ngIf="authService.vehicles | async as lastVehicle;">
+  <ion-card-content>
+    <h1><strong>Last Booking</strong></h1>
+  <p>Car model: <strong>{{ lastVehicle.vehicleModel }}</strong></p>
+  <p>Car color: <strong>{{ lastVehicle.vehicleColor }}</strong></p>
+  <p>Plate number: <strong>{{ lastVehicle.vehiclePlateNumb }}</strong></p>
+  <p>Service: <strong>{{ lastVehicle.service }}</strong></p>
+  <p>Date: <strong>{{ lastVehicle.date }}</strong></p>
+  </ion-card-content>
+</ion-card>
 </ion-content>

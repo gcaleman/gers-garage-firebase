@@ -1,0 +1,19 @@
+ion-select {
+    width: 60%;
+  
+    justify-content: center;
+  }
+  
+  ion-select::part(placeholder),
+  ion-select::part(text) {
+    flex: 0 0 auto;
+  }
+  
+  .colGray {
+    background: lightgray;
+    border: solid black;
+  }
+  
+  .colWhite {
+    border: solid black;
+  }

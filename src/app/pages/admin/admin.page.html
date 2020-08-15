@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Admin</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="authService.filterForm" (submit)="runFilter()">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>Select date interval</ion-label>
+            <ion-datetime
+              displayFormat="DD MM YYYY"
+              placeholder="Start date"
+              [ngModel]="startDate"
+              (ionChange)="startDateChanged($event)"
+              formControlName="date"
+            ></ion-datetime>
+            <ion-datetime
+              displayFormat="DD MM YYYY"
+              placeholder="End date"
+              [ngModel]="endDate"
+              (ionChange)="endDateChanged($event)"
+              formControlName="date"
+            ></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-button type="submit">Run</ion-button>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-select interface="popover" placeholder="Status" formControlName="status">
+              <ion-select-option value="waiting">Waiting</ion-select-option>
+              <ion-select-option value="Booked">Booked</ion-select-option>
+              <ion-select-option value="InService">In Service</ion-select-option>
+              <ion-select-option value="Fixed">Complete</ion-select-option>
+              <ion-select-option value="Collected">Collected</ion-select-option>
+              <ion-select-option value="Unrepairable">Unrepairable</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>Select date to print schedule</ion-label>
+          <ion-datetime
+          displayFormat="DD MM YYYY"
+          placeholder="Select date"
+          [ngModel]="scheduleDate"
+          (ionChange)="scheduleDateChanged($event)"
+          formControlName="scheduleDate"
+        ></ion-datetime>
+      </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-button (click)="pdfSchedule()">Schedule Document</ion-button>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+      <ion-card
+        *ngFor="let services of allServices | async"
+        routerLink="/admin-detail/{{services.date}}/{{services.docId}}/{{services.uid}}/{{services.id}}/{{services.status}}"
+      >
+        <ion-card-header>
+          Date: {{ services.date }}
+        </ion-card-header>
+        <ion-card-content>
+          Plate Number: {{ services.vehiclePlateNumb }}
+        </ion-card-content>
+        <ion-card-content hidden>
+          DocID: {{ services.docId }}
+        </ion-card-content>
+        <ion-card-content hidden>
+          Client UID: {{ services.uid }}
+        </ion-card-content>
+        <ion-card-content hidden>
+          Service ID: {{ services.id }}
+        </ion-card-content>
+        <ion-card-content>
+          Status: {{ services.status }}
+        </ion-card-content>
+      </ion-card>
+  </form>
+</ion-content>

@@ -1,0 +1,195 @@
+{
+    "services": {
+      "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2": {
+        "__collections__": {
+          "booking": {
+            "2020-07-28": {
+              "carColor": "White",
+              "carModel": "Honda Civic",
+              "date": "2020-07-28",
+              "cost": "$50",
+              "service": "Repair",
+              "status": "waiting",
+              "carPlateNumb": "321cba",
+              "comments": "",
+              "__collections__": {}
+            },
+            "2020-07-29": {
+              "carModel": "lalal",
+              "date": "2020-07-29",
+              "comments": "",
+              "status": "waiting",
+              "service": "Major Repair",
+              "carPlateNumb": "asdad",
+              "carColor": "lalala",
+              "cost": "$50",
+              "__collections__": {}
+            },
+            "2020-07-30": {
+              "cost": "$50",
+              "carColor": "White",
+              "comments": "",
+              "service": "Repair",
+              "carModel": "Toyota",
+              "carPlateNumb": "321cba",
+              "status": "waiting",
+              "date": "2020-07-30",
+              "__collections__": {}
+            },
+            "2020-07-31": {
+              "carPlateNumb": "123abc",
+              "cost": "$50",
+              "date": "2020-07-31",
+              "carColor": "Black",
+              "carModel": "Honda Fit",
+              "status": "waiting",
+              "comments": "",
+              "service": "Major Repair",
+              "__collections__": {}
+            },
+            "2020-08-07": {
+              "status": "waiting",
+              "comments": "",
+              "date": "2020-08-07",
+              "carPlateNumb": "asdad",
+              "carModel": "lalal",
+              "cost": "$250",
+              "service": "Major Service",
+              "carColor": "lalala",
+              "__collections__": {}
+            },
+            "2020-08-20": {
+              "cost": "$50",
+              "comments": "",
+              "status": "waiting",
+              "carColor": "Black",
+              "date": "2020-08-20",
+              "service": "Repair",
+              "carModel": "Honda Civic",
+              "carPlateNumb": "123abc",
+              "__collections__": {}
+            },
+            "2020-08-21": {
+              "carColor": "White",
+              "service": "Major Service",
+              "carModel": "Honda Fit",
+              "date": "2020-08-21",
+              "comments": "",
+              "cost": "$250",
+              "status": "waiting",
+              "carPlateNumb": "bca321",
+              "__collections__": {}
+            },
+            "2020-08-29": {
+              "comments": "",
+              "carPlateNumb": "123acb",
+              "carModel": "Toyota",
+              "carColor": "Blue",
+              "status": "waiting",
+              "date": "2020-08-29",
+              "cost": "$250",
+              "service": "Major Service",
+              "__collections__": {}
+            }
+          }
+        }
+      },
+      "dates": {
+        "__collections__": {
+          "2020-07-28": {
+            "SQcRa9HDVLZPZiGo6AS3": {
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-07-28",
+              "status": "waiting",
+              "service": "Repair",
+              "__collections__": {}
+            },
+            "uIorFp9Gi7Uy8fMq6Mba": {
+              "status": "waiting",
+              "service": "Repair",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-07-28",
+              "__collections__": {}
+            }
+          },
+          "2020-07-29": {
+            "G3YEnMlLkjSlxLU9cVUu": {
+              "service": "Major Repair",
+              "status": "waiting",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-07-29",
+              "__collections__": {}
+            },
+            "hNOYnBt6cKYBw7ILfAvd": {
+              "service": "Repair",
+              "date": "2020-07-29",
+              "status": "waiting",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "__collections__": {}
+            }
+          },
+          "2020-07-30": {
+            "V1eovQitptCyXgwqYsE5": {
+              "service": "Repair",
+              "date": "2020-07-30",
+              "status": "waiting",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "__collections__": {}
+            }
+          },
+          "2020-07-31": {
+            "GgIkVT1hq8e0Vc9xeDDh": {
+              "service": "Repair",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-07-31",
+              "status": "waiting",
+              "__collections__": {}
+            },
+            "PuCZVBR3TS5e1wfM9Xhu": {
+              "service": "Major Repair",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-07-31",
+              "status": "waiting",
+              "__collections__": {}
+            }
+          },
+          "2020-08-07": {
+            "XXj8NMZwbjh7QUqUuuPJ": {
+              "status": "waiting",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "service": "Major Service",
+              "date": "2020-08-07",
+              "__collections__": {}
+            }
+          },
+          "2020-08-20": {
+            "6Ewviu4XShcnwJs0hG8k": {
+              "date": "2020-08-20",
+              "service": "Repair",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "status": "waiting",
+              "__collections__": {}
+            }
+          },
+          "2020-08-21": {
+            "wtfcYdGPj0HlFFPYejQ8": {
+              "service": "Major Service",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "date": "2020-08-21",
+              "status": "waiting",
+              "__collections__": {}
+            }
+          },
+          "2020-08-29": {
+            "ohzA1YmYqKoUUdDyuMU7": {
+              "date": "2020-08-29",
+              "uid": "KdYLwwDvSMWQ9Uk7MB4nG2iq1zZ2",
+              "status": "waiting",
+              "service": "Major Service",
+              "__collections__": {}
+            }
+          }
+        }
+      }
+    }
+}

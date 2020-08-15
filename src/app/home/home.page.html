@@ -1,32 +1,45 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>home</ion-title>
+    <ion-title>Home</ion-title>
+    <ion-button type="submit" color="danger" (click)="authService.SignOut()"
+      >Sign out</ion-button
+    >
   </ion-toolbar>
-  <ion-button
-    type="submit"
-    color="danger"
-    expand="block"
-    (click)="authService.SignOut()"
-    >Sign out</ion-button
-  >
 </ion-header>
-<ion-tabs>
+<div *ngIf="authService.admAuthorization(user)">
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="small">Admin Mode</ion-title>
+  </ion-toolbar>
+</ion-header>
+</div>
+<ion-content>
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="profilepage">
+        <ion-icon name="person"></ion-icon>
+        <ion-label>Profile</ion-label>
+      </ion-tab-button>
 
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="profile">
-      <ion-icon name="triangle"></ion-icon>
-      <ion-label>Profile</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="profile">
+        <ion-icon name="person-add"></ion-icon>
+        <ion-label>Update Profile</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="register-car">
-      <ion-icon name="ellipse"></ion-icon>
-      <ion-label>Register car</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="register-car">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-label>Register Service</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="booking">
-      <ion-icon name="square"></ion-icon>
-      <ion-label>Booking</ion-label>
-    </ion-tab-button>
-  </ion-tab-bar>
+      <ion-tab-button tab="services">
+        <ion-icon name="cog"></ion-icon>
+        <ion-label>Your Services</ion-label>
+      </ion-tab-button>
 
-</ion-tabs>
+      <ion-tab-button tab="admin" *ngIf="authService.admAuthorization(user)">
+        <ion-icon name="add-circle"></ion-icon>
+        <ion-label>Manage Services</ion-label>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+</ion-content>
