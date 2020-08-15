@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
-import { LoadingController, AlertController } from "@ionic/angular";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { FirestoreService } from "../../services/data/firestore.service";
+import { FormBuilder } from "@angular/forms";
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -13,10 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class ProfilePage implements OnInit {
   
   constructor(
-    public loadingCtrl: LoadingController,
-    public alertCtrl: AlertController,
     public authService: AuthService,
-    public firestoreService: FirestoreService,
     public formBuilder: FormBuilder,
     public router: Router,
     public actRoute: ActivatedRoute

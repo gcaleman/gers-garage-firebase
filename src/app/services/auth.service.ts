@@ -1,3 +1,9 @@
+/* 
+The codes from this project were adapted from multiple sources to fulfill the needs of the application;
+The sources used for the codes are listed in the README file in the Git repository
+Git repository: https://github.com/gcaleman/gers-garage-firebase
+ */
+
 import { Injectable, NgZone, OnInit } from "@angular/core";
 import { User } from "./user";
 import { Client } from "./client";
@@ -22,22 +28,20 @@ import { Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
 
 import { Validator } from "./validator";
-import { Bookings } from "./bookings";
 import { Vehicles } from "./vehicles";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService implements OnInit {
-  userProfile: Observable<Profile>;
-  userServices: Observable<Client>;
-  allServices: Observable<any>;
-  bookings: Observable<Bookings>;
-  user$: Observable<User>;
-  vehicles: Observable<Vehicles>;
-  services;
-  userData;
-  userUid;
+  userProfile: Observable<Profile>; // stores the data from the users profile
+  userServices: Observable<Client>; // stores the data from the users services
+  allServices: Observable<any>; // stores the data from all booked services
+  user$: Observable<User>; // stores user credentials
+  vehicles: Observable<Vehicles>;// store user vehicle
+  services; // store the services
+  userData; // stores the user data
+  userUid; // stores the user unique identifier;
   public addProfileForm: FormGroup;
   public addServiceForm: FormGroup;
   public filterForm: FormGroup;
@@ -59,8 +63,8 @@ export class AuthService implements OnInit {
     });
 
     this.filterForm = formBuilder.group({
-      date: ["", Validators.required],
-      status: ["", Validators.required],
+      date: [""],
+      status: [""],
     });
 
     // Form group for service registration
@@ -77,6 +81,7 @@ export class AuthService implements OnInit {
       comments: [""],
     });
 
+    // return the data from the user from the database 'users'
     this.user$ = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
@@ -87,6 +92,7 @@ export class AuthService implements OnInit {
       })
     );
 
+    // returns the user profile data from the database profileData
     this.userProfile = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
@@ -100,6 +106,7 @@ export class AuthService implements OnInit {
       })
     );
 
+    // returns the documents from the getVehicles() method
     this.vehicles = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
@@ -111,6 +118,7 @@ export class AuthService implements OnInit {
       })
     );
 
+    // returns the documents from the getServices() method
     this.userServices = this.firestoreAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
@@ -124,7 +132,6 @@ export class AuthService implements OnInit {
 
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
-
     this.firestoreAuth.authState.subscribe((user) => {
       if (user) {
         this.userData = user;
@@ -140,6 +147,8 @@ export class AuthService implements OnInit {
 
   ngOnInit() {}
 
+  // method responsible for storing the data from the user profile form
+  // to the database
   async addProfile() {
     var currentUser = await this.firestoreAuth.currentUser;
 
@@ -170,6 +179,8 @@ export class AuthService implements OnInit {
       });
   }
 
+  // method returns true if the user selected 'Other' option for booking 
+  // a new service;
   getOtherVehicleModel(): Boolean {
     const vehicleModel: String = this.addServiceForm.value.vehicleModel;
     if (vehicleModel == "Other") {
@@ -179,6 +190,8 @@ export class AuthService implements OnInit {
     }
   }
 
+  // method returns the value typed by the user in case they select the 'Other'
+  // option when booking a new service;
   getVehicleModel() {
     const vehicleModel: String = this.addServiceForm.value.vehicleModel;
     const otherModel: String = this.addServiceForm.value.otherModel;
@@ -189,6 +202,9 @@ export class AuthService implements OnInit {
     }
   }
 
+  // method returns true if the user selected 'Other' for vehicle model when booking
+  // a new service and inputed the vehicle model;
+  // returns false in case the user left the input empty;
   showButton(): Boolean {
     var valid = true;
     const vehicleModel: String = this.addServiceForm.value.vehicleModel;
@@ -205,6 +221,7 @@ export class AuthService implements OnInit {
     return valid;
   }
 
+  // method responsible for adding new bookings to the database
   async createClientService() {
     var currentUser = await this.firestoreAuth.currentUser;
     var d = this.addServiceForm.value.date.split("T");
@@ -213,7 +230,6 @@ export class AuthService implements OnInit {
     const date: Date = d[0]; // date variable to hold split date (yyyy/mm/dd);
     console.log(date);
     var count = this.getDateCount(date); // get the date count from the database;
-    var serviceCount = this.getServicesCount(uid, date);
     const vehicleColor: String = this.addServiceForm.value.vehicleColor;
     const vehiclePlateNumb: String = this.addServiceForm.value.vehiclePlateNumb;
     const service: String = this.addServiceForm.value.service;
@@ -231,13 +247,15 @@ export class AuthService implements OnInit {
       cost = "Waiting avaliation";
     }
 
-    const userRef: AngularFirestoreCollection<Client> = this.firestore
+    const userBooking: AngularFirestoreCollection<Client> = this.firestore
       .collection("services")
       .doc(currentUser.uid)
       .collection("booking");
-    const userVehicles: AngularFirestoreDocument<Vehicles> = this.firestore.doc(
-      `vehicles/${currentUser.uid}`
-    );
+    const userVehicles: AngularFirestoreDocument<Vehicles> = this.firestore
+      .collection("services")
+      .doc(currentUser.uid)
+      .collection("vehicles")
+      .doc("last_booked");
     const allServices: AngularFirestoreCollection<any> = this.firestore
       .collection("services")
       .doc("all")
@@ -265,12 +283,6 @@ export class AuthService implements OnInit {
       service: service,
     };
     console.log("count: " + (await count));
-    if ((await serviceCount) >= 1) {
-      window.alert(
-        "You have already booked for this date. Please choose another one"
-      );
-      this.router.navigate(["home/profilepage"]);
-    } else {
       if ((await count) > 10) {
         window.alert("Date is fully booked. Please choose another one");
         this.router.navigate(["home/profilepage"]);
@@ -279,7 +291,7 @@ export class AuthService implements OnInit {
           merge: true,
         });
         allServices.add(data);
-        return userRef
+        return userBooking
           .add(data)
           .then(() => {
             window.alert("Successfully added service.");
@@ -290,9 +302,9 @@ export class AuthService implements OnInit {
             this.router.navigate(["sign-in"]);
           });
       }
-    }
   }
 
+  // method responsible for updating any edit to the bookings in the database
   async updateService(
     date,
     newDate,
@@ -303,7 +315,7 @@ export class AuthService implements OnInit {
     uid,
     docId,
     id,
-    vehiclePieces,
+    vehiclePieces
   ) {
     var docIdUser = this.getServicesFromDate(date, uid, id);
 
@@ -326,8 +338,8 @@ export class AuthService implements OnInit {
     } else {
       cost = 0;
     }
-    const stringCost = "$"+cost.toString();
-    const userRef: AngularFirestoreDocument<Client> = this.firestore
+    const stringCost = "$" + cost.toString();
+    const userService: AngularFirestoreDocument<Client> = this.firestore
       .collection("services")
       .doc(uid)
       .collection("booking")
@@ -351,7 +363,7 @@ export class AuthService implements OnInit {
         mechanic: mechanic,
         vehiclePieces: vehiclePieces,
       });
-      return userRef
+      return userService
         .update({
           cost: stringCost,
           date: nDate,
@@ -372,6 +384,7 @@ export class AuthService implements OnInit {
     }
   }
 
+  // This method was created only to add the vehicle pieces to the database
   /* addDataPieces() {
     const pieces: AngularFirestoreCollection<any> = this.firestore.collection(
       "pieces"
@@ -427,6 +440,7 @@ export class AuthService implements OnInit {
     }
   } */
 
+  // service gets the services booked for 
   async getDateCount(date) {
     var size;
     await this.firestore
@@ -443,6 +457,9 @@ export class AuthService implements OnInit {
     return size;
   }
 
+  // method returns the number of services booked for the particular mechanic
+  // for the particular date and depending on the service type the count is double;
+  // Major repair services have a double count of size.
   async getMechCount(date, mech) {
     var size;
     var size1;
@@ -510,22 +527,7 @@ export class AuthService implements OnInit {
     return size;
   }
 
-  async getServicesCount(uid, date) {
-    var size;
-    await this.firestore
-      .collection("services")
-      .doc(uid)
-      .collection("booking", (ref) => ref.where("date", "==", date))
-      .get()
-      .toPromise()
-      .then((snap) => {
-        console.log(snap);
-        size = snap.size;
-      });
-    console.log("size: " + size);
-    return size;
-  }
-
+  // method returns the path to the database booking collection
   getServices(): AngularFirestoreCollection<Client> {
     return this.firestore
       .collection("services")
@@ -533,13 +535,15 @@ export class AuthService implements OnInit {
       .collection("booking");
   }
 
-  async getServicesFromDate(date, uid, docId) {
+  // method queries the services/user.uid/booking database
+  // where the date and service Id matches and return the document identification
+  async getServicesFromDate(date, uid, serviceId) {
     var id;
     await this.firestore
       .collection("services")
       .doc(uid)
       .collection("booking", (ref) =>
-        ref.where("date", "==", date).where("id", "==", docId)
+        ref.where("date", "==", date).where("id", "==", serviceId)
       )
       .get()
       .toPromise()
@@ -552,12 +556,14 @@ export class AuthService implements OnInit {
     return id;
   }
 
-  async getServiceType(docId) {
+  // method queries the services/all/bookings database for the matching service id
+  // and returns the service type from the database;
+  async getServiceType(serviceId) {
     var service;
     await this.firestore
       .collection("services")
       .doc("all")
-      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .collection("bookings", (ref) => ref.where("id", "==", serviceId))
       .get()
       .toPromise()
       .then((snapshot) => {
@@ -568,12 +574,14 @@ export class AuthService implements OnInit {
     return service;
   }
 
-  async getClientVehicle(docId) {
+  // method queries the services/all/bookings database for the matching service id
+  // and returns the vehicle model from the database;
+  async getClientVehicle(serviceId) {
     var model;
     await this.firestore
       .collection("services")
       .doc("all")
-      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .collection("bookings", (ref) => ref.where("id", "==", serviceId))
       .get()
       .toPromise()
       .then((snapshot) => {
@@ -584,12 +592,14 @@ export class AuthService implements OnInit {
     return model;
   }
 
-  async getClientVehiclePlate(docId) {
+  // method queries the services/all/bookings database for the matching service id
+  // and returns the vehicle license number from the database;
+  async getClientVehiclePlate(serviceId) {
     var plate;
     await this.firestore
       .collection("services")
       .doc("all")
-      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .collection("bookings", (ref) => ref.where("id", "==", serviceId))
       .get()
       .toPromise()
       .then((snapshot) => {
@@ -600,6 +610,7 @@ export class AuthService implements OnInit {
     return plate;
   }
 
+  // method queries the profileData database for the user UID to gets the first name
   async getClientFName(uid) {
     var fName;
     await this.firestore
@@ -614,6 +625,7 @@ export class AuthService implements OnInit {
     return fName;
   }
 
+  // method queries the profileData database for the user UID to gets the last name
   async getClientLName(uid) {
     var lName;
     await this.firestore
@@ -628,6 +640,7 @@ export class AuthService implements OnInit {
     return lName;
   }
 
+  // method queries the profileData database for the user UID to gets the mobile
   async getClientMobile(uid) {
     var mobile;
     await this.firestore
@@ -642,12 +655,14 @@ export class AuthService implements OnInit {
     return mobile;
   }
 
-  async getPiecesId(docId) {
+  // method queries the database services/all/bookings where the service id = serviceId
+  // to get the id of the vehicle parts stored and add them to the var id;
+  async getPiecesId(serviceId) {
     var id: Number[];
     await this.firestore
       .collection("services")
       .doc("all")
-      .collection("bookings", (ref) => ref.where("id", "==", docId))
+      .collection("bookings", (ref) => ref.where("id", "==", serviceId))
       .get()
       .toPromise()
       .then((snapshot) => {
@@ -658,7 +673,8 @@ export class AuthService implements OnInit {
     console.log("id: " + id);
     return id;
   }
-
+// method queries the database 'pieces' for the name of 
+  // the items with id == id and store it into 'name' variable
   async getPieceName(id: number) {
     var name: string;
     console.log("id from get name method: " + id);
@@ -675,6 +691,8 @@ export class AuthService implements OnInit {
     return name;
   }
 
+  // method queries the database 'pieces' for the value of 
+  // the items with id == id and store it into 'value' variable
   async getPieceValue(id: number) {
     var value: number;
     await this.firestore
@@ -690,6 +708,85 @@ export class AuthService implements OnInit {
     return value;
   }
 
+  // method queries the database services/all/bookings for the 
+  // status from services booked for the date == date
+  // the values are pushed into the variable schedule and returned
+  async getScheduleStatus(date) {
+    var schedule = [];
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          schedule.push(doc.data().status);
+        });
+      });
+    console.log("schedule: " + schedule);
+    return schedule;
+  }
+
+  // method queries the database services/all/bookings for the 
+  // services types from services booked for the date == date
+  // the values are pushed into the variable schedule and returned
+  async getScheduleService(date) {
+    var schedule = [];
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          schedule.push(doc.data().service);
+        });
+      });
+    console.log("schedule: " + schedule);
+    return schedule;
+  } 
+  // method queries the database services/all/bookings for the 
+  // mechanics from services booked for the date == date
+  // the values are pushed into the variable schedule and returned
+  async getScheduleMechanic(date) {
+    var schedule = [];
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          schedule.push(doc.data().mechanic);
+        });
+      });
+    return schedule;
+  }
+
+  // method queries the database services/all/bookings for the vehicle 
+  // models from services booked for the date == date
+  // the values are pushed into the variable schedule and returned
+  async getScheduleVehicleModel(date) {
+    var schedule = [];
+    await this.firestore
+      .collection("services")
+      .doc("all")
+      .collection("bookings", (ref) => ref.where("date", "==", date))
+      .get()
+      .toPromise()
+      .then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          schedule.push(doc.data().vehicleModel);
+        });
+      });
+    return schedule;
+  }
+
+  // Method gets the services from the date interval starDate - endDate
+  // and status == status
   getAllServices(startDate, endDate): AngularFirestoreCollection<any> {
     const status: String = this.filterForm.value.status;
     console.log("status: " + status);
@@ -712,9 +809,13 @@ export class AuthService implements OnInit {
         );
     }
   }
-
+  // method gets the last vehicle booked by the user
   getVehicles(): AngularFirestoreDocument<Vehicles> {
-    return this.firestore.collection("vehicles").doc(this.userUid);
+    return this.firestore
+      .collection("services")
+      .doc(this.userUid)
+      .collection("vehicles")
+      .doc("last_booked");
   }
 
   getServicesDetail(date): AngularFirestoreDocument<Client> {
@@ -725,6 +826,7 @@ export class AuthService implements OnInit {
       .doc(date);
   }
 
+  // Method queries database for the documents with id = serviceId and date == date;
   getAdminDetail(date, serviceId): AngularFirestoreDocument<any> {
     return this.firestore
       .collection("services")
@@ -733,7 +835,9 @@ export class AuthService implements OnInit {
       .doc(serviceId);
   }
 
-  // Sign in with email/password
+  /* ---------------------- METHODS FOR SYSTEM ACCESS ------------------------------ */
+
+  // Method responsible for randling the login
   SignIn(email, password) {
     return this.firestoreAuth
       .signInWithEmailAndPassword(email, password)
@@ -746,7 +850,7 @@ export class AuthService implements OnInit {
       });
   }
 
-  // Sign up with email/password
+  // Method to handle the registration using email and password
   SignUp(email, password) {
     return this.firestoreAuth
       .createUserWithEmailAndPassword(email, password)
@@ -760,7 +864,7 @@ export class AuthService implements OnInit {
       });
   }
 
-  // Send email verfificaiton when new user sign up
+  // Method to randle email verfificaiton when new user sign up
   async SendVerificationMail() {
     return (await this.firestoreAuth.currentUser)
       .sendEmailVerification()
@@ -787,6 +891,7 @@ export class AuthService implements OnInit {
     return user !== null && user.emailVerified !== false ? true : false;
   }
 
+  
   // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new auth.GoogleAuthProvider());
@@ -805,24 +910,22 @@ export class AuthService implements OnInit {
       });
   }
 
-  /* Setting up user data when sign in with username/password,
-  sign up with username/password and sign in with social auth
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
+  // Method responsible for setting up the user data to be stored in the
+  // collection 'users' and document 'user.uid';
   async updateUserData(user) {
-    const userRef: AngularFirestoreDocument<any> = this.firestore.doc(
+    const userData: AngularFirestoreDocument<any> = this.firestore.doc(
       `users/${user.uid}`
     );
     const data: User = {
       uid: user.uid,
       email: user.email,
-      photoURL: user.photoURL,
       emailVerified: user.emailVerified,
       displayName: user.displayName,
       roles: {
-        subscriber: true,
+        customer: true,
       },
     };
-    return userRef.set(data, {
+    return userData.set(data, {
       merge: true,
     });
   }

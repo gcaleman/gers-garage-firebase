@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { LoadingController, AlertController } from "@ionic/angular";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { FirestoreService } from "../../services/data/firestore.service";
 import { Router, ActivatedRoute } from "@angular/router";
 
 @Component({
@@ -11,7 +9,9 @@ import { Router, ActivatedRoute } from "@angular/router";
   styleUrls: ["./register-car.page.scss"],
 })
 export class RegisterCarPage implements OnInit {
-  myDate = new Date().toISOString(); /* variable gets the current date and save as an ISOString object */
+  todayDate = new Date(); /* variable gets the current date and save as an ISOString object */
+  myDate = this.todayDate.setDate(this.todayDate.getDate()+1);
+  todayDateString = this.todayDate.toISOString();
 
   vehicles = [
     {type: "Toyta Corolla", value: "Toyta Corolla"},
@@ -59,8 +59,6 @@ export class RegisterCarPage implements OnInit {
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
     public authService: AuthService,
-    public firestoreService: FirestoreService,
-    public formBuilder: FormBuilder,
     public router: Router,
     public actRoute: ActivatedRoute
   ) {

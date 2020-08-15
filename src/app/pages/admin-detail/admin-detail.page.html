@@ -10,214 +10,260 @@
 <ion-content padding>
   <h3>Service Information</h3>
   <form>
-  <ion-grid>
-    <ion-row>
-      <ion-col class="colGray ion-align-items-center" size="8">
-        <div>
-          <strong>Client Info</strong>
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          <strong>Admin Edit</strong>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          Vehicle model
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          {{ (services | async)?.vehicleModel }}
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          {{ (services | async)?.vehicleModel }}
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          Date
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          {{ (services | async)?.date }}
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          <ion-item>
-          <ion-datetime displayFormat="DDDD, DD MM YYYY" placeholder="Select date" [ngModel]="myDate" (ionChange)="dateChanged($event)" [ngModelOptions]="{standalone: true}" #newDate></ion-datetime>
-        </ion-item>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          User UID
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          {{ (services | async)?.uid }}
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          <strong>{{ (services | async)?.uid }}</strong>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          Service type
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          {{ (services | async)?.service }}
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          <ion-item>
-            <ion-select interface="popover" placeholder="Select One" required #service>
-              <ion-select-option value="Annual Service"
-                >Annual Service</ion-select-option
+    <ion-grid>
+      <ion-row>
+        <ion-col class="colGray ion-align-items-center" size="8">
+          <div>
+            <strong>Client Info</strong>
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            <strong>Admin Edit</strong>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            Vehicle model
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            {{ (services | async)?.vehicleModel }}
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            {{ (services | async)?.vehicleModel }}
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            Date
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            {{ (services | async)?.date }}
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            <ion-item>
+              <ion-datetime
+                displayFormat="DDDD, DD MM YYYY"
+                placeholder="Select date"
+                [ngModel]="myDate"
+                (ionChange)="dateChanged($event)"
+                [ngModelOptions]="{standalone: true}"
+                #newDate
+              ></ion-datetime>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            User UID
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            {{ (services | async)?.uid }}
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            <strong>{{ (services | async)?.uid }}</strong>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            Service type
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            {{ (services | async)?.service }}
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            <ion-item>
+              <ion-select
+                interface="popover"
+                placeholder="Select One"
+                required
+                #service
               >
-              <ion-select-option value="Major Service"
-                >Major Service</ion-select-option
+                <ion-select-option value="Annual Service"
+                  >Annual Service</ion-select-option
+                >
+                <ion-select-option value="Major Service"
+                  >Major Service</ion-select-option
+                >
+                <ion-select-option value="Repair">Repair</ion-select-option>
+                <ion-select-option value="Major Repair"
+                  >Major Repair</ion-select-option
+                >
+              </ion-select>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colWhite ion-align-items-center" size="4">
+          <div>
+            Cost
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center" size="4">
+          <div>
+            {{ (services | async)?.cost }}
+          </div>
+        </ion-col>
+        <ion-col class="colWhite" size="4">
+          <div>
+            <ion-item>
+              <ion-select
+                placeholder="Select Items"
+                multiple="true"
+                cancelText="Cancel"
+                okText="Confirm"
+                required
+                #pieces
               >
-              <ion-select-option value="Repair">Repair</ion-select-option>
-              <ion-select-option value="Major Repair"
-                >Major Repair</ion-select-option
+                <ion-select-option
+                  *ngFor="let vehiclePiece of vehiclePieces"
+                  [value]="vehiclePiece.id"
+                  >{{ vehiclePiece.name }} - ${{ vehiclePiece.value
+                  }}</ion-select-option
+                >
+              </ion-select>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            Status
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            {{ (services | async)?.status }}
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            <ion-item>
+              <ion-select
+                interface="popover"
+                placeholder="Select Status"
+                required
+                #status
               >
-            </ion-select>
-          </ion-item>
-        </div>
+                <ion-select-option value="Booked">Booked</ion-select-option>
+                <ion-select-option value="InService"
+                  >In Service</ion-select-option
+                >
+                <ion-select-option value="Fixed">Fixed</ion-select-option>
+                <ion-select-option value="Collected"
+                  >Collected</ion-select-option
+                >
+                <ion-select-option value="Unrepairable"
+                  >Unrepairable</ion-select-option
+                >
+                <ion-select-option value="Cancelled"
+                  >Cancelled</ion-select-option
+                >
+              </ion-select>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colWhite ion-align-items-center">
+          <div>
+            Comments
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center" size="4">
+          <div>
+            {{ (services | async)?.comments }}
+          </div>
+        </ion-col>
+        <ion-col class="colWhite ion-align-items-center" size="4">
+          <div>
+            <ion-input
+              type="text"
+              placeholder="Any comments"
+              #comments
+            ></ion-input>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            Mechanic
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            {{ (services | async)?.mechanic }}
+          </div>
+        </ion-col>
+        <ion-col class="colGray ion-align-items-center">
+          <div>
+            <ion-item>
+              <ion-select
+                interface="popover"
+                placeholder="Select Mechanic"
+                required
+                #mechanic
+              >
+                <ion-select-option value="mech1">Mechanic 1</ion-select-option>
+                <ion-select-option value="mech2">Mechanic 2</ion-select-option>
+                <ion-select-option value="mech3">Mechanic 3</ion-select-option>
+                <ion-select-option value="mech4">Mechanic 4</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          type="submit"
+          color="primary"
+          expand="block"
+          (click)="authService.updateService(getDate(), newDate.value, status.value, service.value, mechanic.value,
+           comments.value, getUserUid(), getDocUid(), getId(), pieces.value)"
+          >Update Service</ion-button
+        >
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col class="colWhite ion-align-items-center" size="4">
-        <div>
-          Cost
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center" size="4">
-        <div>
-          {{ (services | async)?.cost }}
-        </div>
-      </ion-col>
-      <ion-col class="colWhite" size="4">
-        <div>
-          <ion-item>
-          <ion-select placeholder="Select Items" multiple="true" cancelText="Cancel" okText="Confirm" required #pieces>
-            <ion-select-option *ngFor="let vehiclePiece of vehiclePieces" [value]="vehiclePiece.id">{{ vehiclePiece.name }} - ${{ vehiclePiece.value }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        </div>
+      <ion-col>
+        <ion-button
+          *ngIf="checkStatus()"
+          type="submit"
+          color="primary"
+          expand="block"
+          (click)="generatePDF()"
+          >Generate PDF Document</ion-button
+        >
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          Status
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          {{ (services | async)?.status }}
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          <ion-item>
-            <ion-select interface="popover" placeholder="Select Status" required #status>
-              <ion-select-option value="Booked">Booked</ion-select-option>
-              <ion-select-option value="InService">In Service</ion-select-option>
-              <ion-select-option value="Fixed">Fixed</ion-select-option>
-              <ion-select-option value="Collected">Collected</ion-select-option>
-              <ion-select-option value="Unrepairable">Unrepairable</ion-select-option>
-              <ion-select-option value="Cancelled">Cancelled</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colWhite ion-align-items-center">
-        <div>
-          Comments
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center" size="4">
-        <div>
-          {{ (services | async)?.comments }}
-        </div>
-      </ion-col>
-      <ion-col class="colWhite ion-align-items-center" size="4">
-        <div>
-          <ion-input type="text" placeholder="Any comments" #comments></ion-input>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          Mechanic
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          {{ (services | async)?.mechanic }}
-        </div>
-      </ion-col>
-      <ion-col class="colGray ion-align-items-center">
-        <div>
-          <ion-item>
-          <ion-select interface="popover" placeholder="Select Mechanic" required #mechanic>
-            <ion-select-option value="mech1">Mechanic 1</ion-select-option>
-            <ion-select-option value="mech2">Mechanic 2</ion-select-option>
-            <ion-select-option value="mech3">Mechanic 3</ion-select-option>
-            <ion-select-option value="mech4">Mechanic 4</ion-select-option>
-          </ion-select>
-        </ion-item>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <ion-row>
-    <ion-col>
-      <ion-button
-        type="submit"
-        color="primary"
-        expand="block"
-        (click)="authService.updateService(getDate(), newDate.value, status.value, service.value, mechanic.value, comments.value, getUserUid(), getDocUid(), getId(), pieces.value)"
-        >Update Service</ion-button
-      >
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button
-      *ngIf="checkStatus()"
-        type="submit"
-        color="primary"
-        expand="block"
-        (click)="generatePDF()"
-        >Generate PDF Document</ion-button
-      >
-    </ion-col>
-  </ion-row>
-</form>
+  </form>
 </ion-content>
-

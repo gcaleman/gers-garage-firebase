@@ -1,12 +1,18 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Home</ion-title>
-    <ion-title *ngIf="authService.admAuthorization(user)">Admin Mode</ion-title>
     <ion-button type="submit" color="danger" (click)="authService.SignOut()"
       >Sign out</ion-button
     >
   </ion-toolbar>
 </ion-header>
+<div *ngIf="authService.admAuthorization(user)">
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="small">Admin Mode</ion-title>
+  </ion-toolbar>
+</ion-header>
+</div>
 <ion-content>
   <ion-tabs>
     <ion-tab-bar slot="bottom">

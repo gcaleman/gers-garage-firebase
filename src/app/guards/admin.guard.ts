@@ -8,7 +8,7 @@ import {
 } from "@angular/router";
 import { Observable } from "rxjs";
 import { AuthService } from "../services/auth.service";
-import { take, map, tap } from 'rxjs/operators';
+import { take, map, tap } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -24,13 +24,12 @@ export class AdminGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-
     return this.authService.user$.pipe(
       take(1),
-      map(user => user && user.roles.admin ? true: false),
-      tap(isAdmin => {
+      map((user) => (user && user.roles.admin ? true : false)),
+      tap((isAdmin) => {
         if (!isAdmin) {
-          console.error("Access Denied.")
+          console.error("Access Denied.");
         }
       })
     );
